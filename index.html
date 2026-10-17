@@ -1,57 +1,269 @@
 <!doctype html>
 <html lang="en-GB">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Serindor</title>
-  <meta name="description" content="Serindor — the home of Cryptic Seconds and future projects.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Serindor</title>
+<meta name="description" content="Serindor — the home of Cryptic Seconds and future projects.">
+<meta name="theme-color" content="#0E1014">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 58 12v18c0 16-11 26-26 31C17 56 6 46 6 30V12Z' fill='%231F3A5F' stroke='%233D7BD9' stroke-width='3'/%3E%3Cpath d='M32 14v34M20 26h24' stroke='%23E6E8EC' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Serindor: sable ground, forged-steel plates, azure heraldry. One committed dark look. */
+:root {
+  --sable: #0E1014;
+  --sable-2: #13161B;
+  --steel: #2A2F36;
+  --edge: #3A414A;
+  --burnished: #8A929C;
+  --argent: #E6E8EC;
+  --azure: #3D7BD9;
+  --azure-deep: #1F3A5F;
+  --azure-pale: #9EC0EE;
+  --display: "IM Fell English SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --italic: "IM Fell English", "Palatino Linotype", Georgia, serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--sable); scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--sable); color: var(--argent);
+  font-family: var(--body); font-size: 17px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before { animation: none !important; transition: none !important; } }
+a { color: var(--azure-pale); text-underline-offset: 3px; }
+a:hover { color: var(--argent); }
+:focus-visible { outline: 2px solid var(--azure); outline-offset: 3px; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+.label { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--azure-pale); }
+
+/* ---------- header ---------- */
+header.bar { position: sticky; top: 0; z-index: 10; background: rgba(14,16,20,.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--edge); }
+header.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--argent); text-decoration: none; font-family: var(--display); font-size: 22px; letter-spacing: .04em; }
+.brand svg { width: 26px; height: 30px; flex: none; }
+nav { display: flex; gap: 22px; }
+nav a { color: var(--burnished); text-decoration: none; font-size: 15px; }
+nav a:hover { color: var(--argent); }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--edge);
+  background:
+    radial-gradient(ellipse 60% 70% at 78% 40%, rgba(61,123,217,.16), transparent 70%),
+    linear-gradient(180deg, var(--sable) 0%, var(--sable-2) 100%); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 88px 96px; }
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 12vw, 132px); line-height: .9; letter-spacing: .02em; margin: 14px 0 22px; }
+.hero h1 .initial { color: var(--azure); }
+.hero p.tag { font-family: var(--italic); font-style: italic; font-size: clamp(22px, 3.4vw, 30px); color: var(--argent); margin: 0 0 30px; max-width: 26ch; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 3px; font-weight: 600; font-size: 15px; text-decoration: none; transition: background .15s, border-color .15s, color .15s; }
+.btn-azure { background: var(--azure); color: #fff; }
+.btn-azure:hover { background: #4E8BE6; color: #fff; }
+.btn-steel { border: 1px solid var(--edge); color: var(--argent); background: var(--steel); }
+.btn-steel:hover { border-color: var(--azure); color: var(--argent); }
+
+.crest { justify-self: center; width: min(100%, 340px); }
+.crest svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
+@media (max-width: 760px) {
+  .hero .wrap { grid-template-columns: 1fr; padding-block: 56px 64px; gap: 28px; }
+  .crest { order: -1; width: 170px; justify-self: start; }
+}
+
+/* steel band with a chevron pattern, like a blazoned border */
+.band { height: 14px; border-bottom: 1px solid var(--edge);
+  background: repeating-linear-gradient(135deg, var(--azure-deep) 0 10px, var(--steel) 10px 20px); opacity: .9; }
+
+/* ---------- sections ---------- */
+section { padding-block: 84px; }
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 30px; }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 5.5vw, 52px); margin: 6px 0 0; line-height: 1; letter-spacing: .02em; }
+.head p { margin: 0; color: var(--burnished); max-width: 42ch; }
+
+/* project card, styled like a steel plate with an azure banner edge */
+.project { display: grid; grid-template-columns: 220px minmax(0, 1fr); background: var(--steel); border: 1px solid var(--edge); border-radius: 4px; overflow: hidden; }
+.project .art { background: var(--azure-deep); display: grid; place-items: center; padding: 28px; border-right: 1px solid var(--edge); position: relative; }
+.project .art::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 9px); pointer-events: none; }
+.project .art svg { width: 140px; height: 140px; position: relative; z-index: 1; }
+.project .body { padding: 30px 32px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.project h3 { font-family: var(--display); font-weight: 400; font-size: 34px; margin: 0; line-height: 1.1; }
+.project h3 em { font-family: var(--italic); color: var(--azure-pale); }
+.project .meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--edge); border-radius: 2px; color: var(--burnished); }
+.chip.live { border-color: var(--azure); color: var(--azure-pale); }
+.project p { margin: 0; max-width: 58ch; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge); margin-top: 4px; }
+.facts div { padding: 12px 0; display: grid; gap: 2px; }
+.facts div + div { border-left: 1px solid var(--edge); padding-left: 16px; }
+.facts b { font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--argent); line-height: 1; }
+.facts span { font-size: 13px; color: var(--burnished); }
+.links { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; font-size: 15px; }
+@media (max-width: 760px) {
+  .project { grid-template-columns: 1fr; }
+  .project .art { border-right: 0; border-bottom: 1px solid var(--edge); padding: 22px; }
+  .project .art svg { width: 96px; height: 96px; }
+  .project .body { padding: 24px 20px; }
+}
+
+.forge { margin-top: 18px; border: 1px dashed var(--edge); border-radius: 4px; padding: 20px 24px; display: flex; gap: 14px; align-items: center; color: var(--burnished); }
+.forge svg { width: 22px; height: 22px; flex: none; color: var(--azure); }
+
+/* contact */
+.contact { background: var(--sable-2); border-top: 1px solid var(--edge); }
+.contact .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.mail { background: var(--steel); border: 1px solid var(--edge); border-radius: 4px; padding: 22px 24px; display: grid; gap: 6px; min-width: 0; }
+.mail .addr { font-family: var(--mono); font-size: 17px; color: var(--argent); overflow-wrap: anywhere; user-select: all; }
+.mail .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.copy { background: transparent; border: 1px solid var(--edge); color: var(--burnished); font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 3px; cursor: pointer; }
+.copy:hover { border-color: var(--azure); color: var(--argent); }
+@media (max-width: 760px) { .contact .grid { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--edge); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 26px max(26px, env(safe-area-inset-bottom)); color: var(--burnished); font-size: 14px; }
+footer .motto { font-family: var(--italic); font-style: italic; }
+
+/* gentle entrance for the hero only */
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.hero .text > * { animation: rise .7s ease-out both; }
+.hero .text > *:nth-child(2) { animation-delay: .08s; }
+.hero .text > *:nth-child(3) { animation-delay: .16s; }
+.hero .text > *:nth-child(4) { animation-delay: .24s; }
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="wordmark" href="./">Serindor</a>
-      <nav><a href="#projects">Projects</a><a href="#contact">Contact</a></nav>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Serindor home">
+      <svg viewBox="0 0 52 60" aria-hidden="true"><path d="M26 2 50 10v16c0 16-10 26-24 32C12 52 2 42 2 26V10Z" fill="#1F3A5F" stroke="#3D7BD9" stroke-width="2.5"/><path d="M26 13v32M16 23h20" stroke="#E6E8EC" stroke-width="3.5" stroke-linecap="round"/></svg>
+      Serindor
+    </a>
+    <nav aria-label="Main">
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="text">
+      <span class="label">Est. 2026</span>
+      <h1><span class="initial">S</span>erindor</h1>
+      <p class="tag">Small things, carefully made.</p>
+      <div class="cta">
+        <a class="btn btn-azure" href="#projects">See the projects</a>
+        <a class="btn btn-steel" href="#contact">Get in touch</a>
+      </div>
     </div>
-  </header>
+    <div class="crest" aria-hidden="true">
+      <!-- Original heraldic shield: azure field, steel bordure, argent sword over a chevron of seconds -->
+      <svg viewBox="0 0 300 360">
+        <defs>
+          <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#29507F"/><stop offset="1" stop-color="#16294A"/></linearGradient>
+          <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A929C"/><stop offset=".45" stop-color="#3A414A"/><stop offset="1" stop-color="#6E757C"/></linearGradient>
+        </defs>
+        <path d="M150 8 290 52v96c0 98-60 160-140 204C70 308 10 246 10 148V52Z" fill="url(#steel)"/>
+        <path d="M150 26 272 64v84c0 86-52 142-122 182C80 290 28 234 28 148V64Z" fill="url(#field)"/>
+        <path d="M44 214 150 128l106 86v30L150 158 44 244Z" fill="#2A2F36" opacity=".9"/>
+        <g fill="#9EC0EE" opacity=".55">
+          <circle cx="78" cy="96" r="3"/><circle cx="104" cy="88" r="3"/><circle cx="196" cy="88" r="3"/><circle cx="222" cy="96" r="3"/>
+          <circle cx="66" cy="122" r="3"/><circle cx="234" cy="122" r="3"/>
+        </g>
+        <g>
+          <path d="M150 60v196" stroke="#E6E8EC" stroke-width="10" stroke-linecap="round"/>
+          <path d="M150 60 142 76h16Z" fill="#E6E8EC"/>
+          <rect x="112" y="226" width="76" height="10" rx="5" fill="#E6E8EC"/>
+          <path d="M150 236v40" stroke="#8A929C" stroke-width="12" stroke-linecap="round"/>
+          <circle cx="150" cy="288" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="band" aria-hidden="true"></div>
 
-  <main class="wrap">
-    <section class="hero">
-      <div class="mark" aria-hidden="true"></div>
-      <h1>Serindor</h1>
-      <p>Small things, carefully made.</p>
-    </section>
+<section id="projects">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="label">Projects</span><h2>From the forge</h2></div>
+      <p>Small, independent projects, built with care for the details.</p>
+    </div>
 
-    <section id="projects">
-      <h2 class="section-label">Projects</h2>
-      <article class="project">
-        <h2>Cryptic Seconds</h2>
-        <p class="kind">Discord game</p>
+    <article class="project">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" fill="none" stroke="#3A414A" stroke-width="8"/>
+          <path d="M70 12a58 58 0 1 1-55.2 75.9" fill="none" stroke="#3D7BD9" stroke-width="8" stroke-linecap="round"/>
+          <g stroke="#9EC0EE" stroke-width="2.5" stroke-linecap="round">
+            <path d="M70 22v8M70 110v8M22 70h8M110 70h8"/>
+          </g>
+          <text x="70" y="82" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="38" fill="#E6E8EC">Cs</text>
+        </svg>
+      </div>
+      <div class="body">
+        <div class="meta"><span class="chip live">Live</span><span class="chip">Discord game</span></div>
+        <h3>Cryptic <em>Seconds</em></h3>
         <p>A daily cryptic clue, played right inside your Discord server. One clue a day, a streak to protect, and a leaderboard to settle the argument.</p>
+        <div class="facts">
+          <div><b>1</b><span>clue a day</span></div>
+          <div><b>60s</b><span>on the clock</span></div>
+          <div><b>0</b><span>cost to play</span></div>
+        </div>
         <div class="links">
-          <!-- Add your bot invite link here when ready, e.g.
-          <a href="https://discord.com/oauth2/authorize?client_id=YOUR_ID">Add to Discord</a> -->
-          <a href="crypticseconds/terms/">Terms of Service</a>
-          <a href="crypticseconds/privacy/">Privacy Policy</a>
+          <a class="btn btn-azure" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add to Discord</a>
+          <a href="/crypticseconds/terms/">Terms of Service</a>
+          <a href="/crypticseconds/privacy/">Privacy Policy</a>
           <a href="mailto:support@serindor.com">Support</a>
         </div>
-      </article>
-    </section>
+      </div>
+    </article>
 
-    <section id="contact" class="contact">
-      <h2 class="section-label">Contact</h2>
-      <p>For anything at all: <a href="mailto:hello@serindor.com">hello@serindor.com</a></p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <span>&copy; 2026 Serindor</span>
-      <span><a href="mailto:hello@serindor.com">hello@serindor.com</a></span>
+    <div class="forge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20h16M6 20l1.5-6h9L18 20M9 14V9a3 3 0 0 1 6 0v5M12 3v2"/></svg>
+      <span>More projects are on the anvil. Check back soon.</span>
     </div>
-  </footer>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="label">Contact</span><h2>Send word</h2></div>
+      <p>For anything at all.</p>
+    </div>
+    <div class="grid">
+      <div class="mail">
+        <span class="label">General</span>
+        <div class="row"><span class="addr" id="m1">hello@serindor.com</span><button class="copy" type="button" data-copy="m1">Copy</button></div>
+      </div>
+      <div class="mail">
+        <span class="label">Support for Cryptic Seconds</span>
+        <div class="row"><span class="addr" id="m2">support@serindor.com</span><button class="copy" type="button" data-copy="m2">Copy</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Serindor</span>
+    <span class="motto">Small things, carefully made.</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
+  const el = document.getElementById(btn.dataset.copy);
+  try { await navigator.clipboard.writeText(el.textContent); btn.textContent = "Copied"; }
+  catch { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; }
+  setTimeout(() => (btn.textContent = "Copy"), 1600);
+}));
+</script>
 </body>
 </html>
