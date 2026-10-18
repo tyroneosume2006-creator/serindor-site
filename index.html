@@ -93,8 +93,9 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 
 
 /* contact */
 .contact p.intro { margin: 0 0 18px; }
-.addr-list { display: grid; gap: 0; max-width: 560px; border-top: 1px solid var(--edge); }
-.addr { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--edge); }
+.addr-list { display: grid; gap: 0; max-width: 640px; border-top: 1px solid var(--edge); }
+.addr { display: grid; grid-template-columns: 210px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; padding: 14px 0; border-bottom: 1px solid var(--edge); }
+@media (max-width: 560px) { .addr { grid-template-columns: minmax(0, 1fr) auto; } .addr span { grid-column: 1 / -1; } }
 .addr span { color: var(--burnished); font-size: 15px; }
 .addr a { font-size: 18px; color: var(--argent); overflow-wrap: anywhere; }
 .copy { background: none; border: 1px solid var(--edge); color: var(--burnished); font: inherit; font-size: 14px; min-height: 36px; padding: 4px 14px; border-radius: 2px; cursor: pointer; }
