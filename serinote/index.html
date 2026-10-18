@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Serinote · Serindor</title>
+<meta name="description" content="Serinote turns any reading into a visual lesson: summary, concept map, formulas, flashcards and a quiz, each point linked to its page. A Serindor project.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='5' width='18' height='23' rx='3' fill='none' stroke='%2315231e' stroke-width='2'/%3E%3Ccircle cx='23' cy='11' r='4' fill='%230e7a5f'/%3E%3Ccircle cx='25' cy='23' r='4' fill='%23a8561a'/%3E%3C/svg%3E">
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a study desk. Library of lessons, then a lesson with tabs on the left and the source page open beside it. */
+:root{
+  --paper:#f3f6f4; --sheet:#ffffff; --ink:#15231e; --ink-2:#4a5c55; --rule:#d6e0db;
+  --bio:#0e7a5f; --bio-soft:#dcefe7; --chem:#a8561a; --chem-soft:#f6e6d8;
+  --accent:#1f5f8b; --accent-soft:#e2edf5; --good:#1d7a3f; --bad:#b3372b; --hl:#fff1a8;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1714; --sheet:#16211d; --ink:#e4ece8; --ink-2:#a2b4ad; --rule:#2a3a34;
+  --bio:#4fc39d; --bio-soft:#173a2f; --chem:#e59a5c; --chem-soft:#3b2a1c;
+  --accent:#7db7e2; --accent-soft:#1a2f3f; --good:#5fcf88; --bad:#f08a7e; --hl:#5a4f12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1714; --sheet:#16211d; --ink:#e4ece8; --ink-2:#a2b4ad; --rule:#2a3a34;
+  --bio:#4fc39d; --bio-soft:#173a2f; --chem:#e59a5c; --chem-soft:#3b2a1c;
+  --accent:#7db7e2; --accent-soft:#1a2f3f; --good:#5fcf88; --bad:#f08a7e; --hl:#5a4f12; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;text-wrap:balance;margin:0;line-height:1.15}
+.wrap{max-width:1240px;margin:0 auto}
+header.top{display:flex;align-items:center;gap:16px;padding-block:18px;border-bottom:1px solid var(--rule);margin-bottom:24px}
+.mark{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0}
+.mark svg{width:28px;height:28px}
+.mark span{font-family:var(--f-display);font-size:22px;font-weight:700;letter-spacing:-.01em}
+.home-link{margin-left:auto;font-size:14px;color:var(--ink-2);text-decoration:none;padding:8px 0}.home-link:hover{color:var(--ink)}
+.top .tag{font-size:13px;color:var(--ink-2)}
+.net{display:inline-flex;align-items:center;gap:6px}
+.net i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+.net.off i{background:var(--bad)}
+
+/* Library */
+.lib-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start;margin-bottom:36px}
+@media (max-width:820px){.lib-head{grid-template-columns:1fr}}
+.lib-head h1{font-size:clamp(30px,4.4vw,46px);letter-spacing:-.02em}
+.lib-head p{color:var(--ink-2);max-width:56ch;margin:14px 0 0}
+.drop{border:2px dashed var(--rule);border-radius:14px;background:var(--sheet);padding:26px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;transition:border-color .15s, background .15s}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop h2{font-size:20px}
+.drop small{color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:10px 16px;border:1px solid var(--rule);background:var(--sheet);font-weight:700;font-size:15px}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:6px 11px;font-size:14px}
+.section-label{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);font-weight:700;margin:0 0 12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.lcard{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:18px;text-align:left;display:flex;flex-direction:column;gap:10px;min-width:0}
+.lcard:hover{border-color:var(--ink-2)}
+.lcard h3{font-size:19px}
+.lcard p{margin:0;color:var(--ink-2);font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--ink-2)}
+.chip{font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;letter-spacing:.02em}
+.chip.Biology{background:var(--bio-soft);color:var(--bio)}
+.chip.Chemistry{background:var(--chem-soft);color:var(--chem)}
+.chip.Other{background:var(--accent-soft);color:var(--accent)}
+.chip.due{background:var(--accent-soft);color:var(--accent)}
+.lcard .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto}
+.del{background:none;border:0;color:var(--ink-2);font-size:13px;text-decoration:underline;padding:4px}
+
+/* Progress */
+.progress{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:22px;margin-bottom:28px}
+.progress h2{font-size:20px;margin-bottom:12px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.steps li{display:flex;gap:10px;align-items:baseline;color:var(--ink-2)}
+.steps li b{font-family:var(--f-mono);font-size:13px;width:18px;flex:none}
+.steps li.done{color:var(--ink)} .steps li.done b{color:var(--good)}
+.steps li.now{color:var(--ink);font-weight:700}
+.err{color:var(--bad);margin-top:12px}
+.stream{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);max-height:4.5em;overflow:hidden;margin-top:10px;white-space:pre-wrap;word-break:break-all}
+
+/* Lesson */
+.lesson{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:28px;align-items:start}
+@media (max-width:1000px){.lesson{grid-template-columns:minmax(0,1fr)}}
+.back{background:none;border:0;padding:0;color:var(--ink-2);font-size:14px;margin-bottom:10px}
+.l-title{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.02em;margin:6px 0 8px}
+.l-over{color:var(--ink-2);max-width:65ch;margin:0 0 18px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:22px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font-weight:700;color:var(--ink-2);white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tabs .n{font-family:var(--f-mono);font-size:11px;font-weight:400;margin-left:4px}
+.pg{font-family:var(--f-mono);font-size:12px;border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:1px 7px;white-space:nowrap;vertical-align:1px}
+.pg:hover{border-color:var(--accent);color:var(--accent)}
+.pg.on{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+
+.summary{list-style:none;margin:0;padding:0;display:grid;gap:0;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)}
+.summary li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;padding:14px 18px;border-top:1px solid var(--rule);align-items:baseline}
+.summary li:first-child{border-top:0}
+.summary .k{font-family:var(--f-mono);font-size:13px;color:var(--ink-2)}
+.vf{font-size:12px;color:var(--good);display:block;margin-top:3px}
+.vf.no{color:var(--ink-2)}
+
+.mapbox{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);overflow-x:auto}
+.mapbox svg{display:block;min-width:640px;width:100%;height:auto;max-height:620px}
+.mapbox .edge{stroke:var(--ink-2);stroke-width:1.4;fill:none;opacity:.7}
+.mapbox .elab{font-family:var(--f-body);font-size:11px;fill:var(--ink-2);paint-order:stroke;stroke:var(--sheet);stroke-width:4px}
+.mapbox .node rect{fill:var(--paper);stroke:var(--ink-2);stroke-width:1.2}
+.mapbox .node.hub rect{fill:var(--subj-soft);stroke:var(--subj)}
+.mapbox .node text{font-family:var(--f-body);font-size:13px;font-weight:700;fill:var(--ink)}
+.mapbox .node{cursor:pointer}
+.mapbox .node:hover rect,.mapbox .node.sel rect{stroke:var(--accent);stroke-width:2.4}
+.mapnote{margin-top:12px;padding:14px 18px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);min-height:56px}
+.mapnote b{font-family:var(--f-display)}
+
+.eqs{display:grid;gap:14px}
+.eq{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px;min-width:0}
+.eq .nm{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-weight:700}
+.eq .ex{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:clamp(18px,2.6vw,24px);margin:10px 0 12px;overflow-x:auto;white-space:nowrap;padding-bottom:2px}
+.eq dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;margin:0;font-size:14px}
+.eq dt{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-weight:700}
+.eq dd{margin:0;color:var(--ink-2)}
+
+.fc-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.fc-bar .stat{color:var(--ink-2);font-size:14px;margin-right:auto}
+.boxes{display:flex;gap:4px;align-items:flex-end;height:30px}
+.boxes span{width:14px;background:var(--subj-soft);border:1px solid var(--subj);border-radius:3px 3px 0 0}
+.flash{perspective:1200px;max-width:620px}
+.flash .inner{position:relative;min-height:240px;transition:transform .45s;transform-style:preserve-3d}
+.flash.flipped .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:26px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.face.b{transform:rotateY(180deg)}
+.face .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);font-weight:700}
+.face .txt{font-size:clamp(18px,2.4vw,22px)}
+.face.f .txt{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3vw,28px)}
+.rate{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.rate .again{border-color:var(--bad);color:var(--bad)}
+.rate .good{border-color:var(--good);color:var(--good)}
+.done-box{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:26px;max-width:620px}
+.done-box h3{font-size:22px;margin-bottom:6px}
+
+.quiz{display:grid;gap:14px;max-width:760px}
+.q{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px}
+.q .qh{display:flex;gap:10px;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.q .qh b{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.q p.qt{margin:0 0 12px;font-weight:700}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:10px 14px}
+.opt:hover:not(:disabled){border-color:var(--ink-2)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb, var(--good) 14%, var(--sheet))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb, var(--bad) 12%, var(--sheet))}
+.opt:disabled{cursor:default}
+.calc{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.calc input,.short textarea{font:inherit;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:8px;padding:9px 12px}
+.calc input{width:150px;font-family:var(--f-mono)}
+.short textarea{width:100%;min-height:70px;resize:vertical;margin-bottom:8px}
+.fb{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--paper);font-size:15px}
+.fb .v{font-weight:700}
+.fb .v.ok{color:var(--good)} .fb .v.no{color:var(--bad)}
+.score{display:flex;flex-wrap:wrap;gap:18px;align-items:center;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:16px 20px;margin-bottom:16px}
+.score .big{font-family:var(--f-display);font-size:34px;font-weight:700;font-variant-numeric:tabular-nums}
+.score .sub{color:var(--ink-2);font-size:14px}
+.gain{font-weight:700;color:var(--good)}
+
+/* Source page */
+.source{position:sticky;top:16px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);display:flex;flex-direction:column;max-height:calc(100vh - 32px);min-width:0}
+.source .sh{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--rule)}
+.source .sh h2{font-size:15px;font-family:var(--f-body);margin-right:auto}
+.source .sh .x{display:none}
+.source .pnav{display:flex;gap:4px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--rule)}
+.source .body{position:relative;padding:18px 20px;overflow-y:auto;font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-size:15px;line-height:1.65}
+.source .body p{margin:0 0 12px}
+.source .pnum{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);margin-bottom:10px;display:block}
+mark{background:var(--hl);color:inherit;padding:0 2px;border-radius:2px}
+@media (max-width:1000px){
+  .source{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:70vh;border-radius:14px 14px 0 0;z-index:20;
+    padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);
+    box-shadow:0 -10px 30px rgba(0,0,0,.18);transform:translateY(105%);transition:transform .25s}
+  .source.open{transform:none}
+  .source .sh .x{display:inline-flex}
+}
+.empty{color:var(--ink-2)}
+.xp{background:none;border:0;padding:2px 0;color:var(--accent);font-size:14px;font-weight:700;margin-top:6px}
+.xbox{margin-top:10px;padding:12px 14px;border-left:3px solid var(--subj);background:var(--paper);border-radius:0 8px 8px 0;font-size:15px}
+.xbox p{margin:0 0 8px} .xbox p:last-child{margin:0}
+.tl{list-style:none;margin:0;padding:0 0 0 22px;position:relative;max-width:760px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+.tl li{position:relative;padding:0 0 22px}
+.tl li::before{content:"";position:absolute;left:-21px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:3px solid var(--subj)}
+.tl .d{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--subj)}
+.tl .ev{font-weight:700;margin:2px 0}
+.tl .why{color:var(--ink-2);font-size:15px}
+.chat{display:flex;flex-direction:column;gap:12px;max-width:760px}
+.msg{padding:12px 16px;border-radius:12px;max-width:88%;min-width:0;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--ink);color:var(--paper)}
+.msg.a{align-self:flex-start;background:var(--sheet);border:1px solid var(--rule)}
+.msg.a p{margin:0 0 8px} .msg.a p:last-child{margin:0}
+.ask{display:flex;gap:8px;margin-top:4px}
+.ask textarea{flex:1;min-width:0;font:inherit;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);border-radius:10px;padding:10px 12px;resize:vertical;min-height:46px}
+.sugg{display:flex;flex-wrap:wrap;gap:8px}
+.sugg button{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:6px 12px;font-size:14px}
+.sugg button:hover{border-color:var(--subj)}
+.note{font-size:13px;color:var(--ink-2);margin-top:28px;max-width:70ch}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <button class="mark" id="home" aria-label="Serinote library">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="18" height="23" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="23" cy="11" r="4" fill="var(--bio)"/><circle cx="25" cy="23" r="4" fill="var(--chem)"/><path d="M12 13 L23 11 M12 20 L25 23" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="13" r="2" fill="currentColor"/><circle cx="12" cy="20" r="2" fill="currentColor"/></svg>
+      <span>Serinote</span>
+    </button>
+    <a class="home-link" href="/">Serindor</a><span class="tag"><span class="net" id="net"><i></i><span id="netTxt">Online</span></span></span>
+  </header>
+  <main id="app"></main>
+</div>
+
+<input type="file" id="file" accept="application/pdf,.pdf,text/plain,.txt,.md" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script>
+const HOSTED = !window.claude;
+"use strict";
+/* ---------- Sample lessons (built in, so they work with no connection) ---------- */
+const SAMPLES = [
+{
+  id:"sample-meme", sample:true, subject:"Crypto", title:"How Memecoins Work",
+  file:"Memecoins primer · sample chapter (written for this demo).pdf",
+  overview:"What memecoins are, where they came from, how their prices and trading work, and how people lose money on them. Uses Dogecoin, Shiba Inu and launchpad tokens as examples.",
+  pages:[
+    {n:1,text:"What a memecoin is\n\nA memecoin is a cryptocurrency whose value comes mainly from community, attention and internet culture, rather than from cash flows or a working product. Its price moves with social media hype, so it can rise or fall very fast.\n\nThe first well-known memecoin, Dogecoin (DOGE), was launched in December 2013 by software engineers Billy Markus and Jackson Palmer as a joke based on the 'Doge' Shiba Inu meme. Dogecoin runs on its own blockchain.\n\nMost newer memecoins are not their own blockchains. They are tokens issued on an existing chain such as Ethereum or Solana. Shiba Inu (SHIB), launched in August 2020 by an anonymous creator using the name 'Ryoshi', is an ERC-20 token on Ethereum. In 2021, Dogecoin's total market value briefly passed 80 billion US dollars."},
+    {n:2,text:"Supply, price and market cap\n\nMemecoins often have enormous supplies. Shiba Inu started with a total supply of one quadrillion tokens. A huge supply means a tiny price per token, which can make a coin look cheap when it is not.\n\nThe useful number is market capitalisation: market cap = price × circulating supply. A token priced at 0.00002 dollars with 500 billion tokens in circulation has a market cap of 10 million dollars. Fully diluted value (FDV) uses the total supply instead, including tokens not yet released.\n\nAlways check holder concentration. If a few wallets, often the creators or early insiders, hold a large share of the supply, they can sell into buyers and crash the price."},
+    {n:3,text:"How memecoins are traded\n\nNew tokens usually trade on decentralised exchanges (DEXs) through liquidity pools rather than order books. A pool holds two assets, for example a memecoin and SOL. Many pools use the constant product rule x × y = k: the product of the two reserves stays the same during a trade.\n\nIf a pool holds 100 SOL and 1,000,000 tokens, then k = 100,000,000 and the price is 0.0001 SOL per token. Buying tokens removes them from the pool, so each next token costs more. In a small pool, one large trade moves the price a lot. This is called price impact or slippage.\n\nSince January 2024, launchpads such as pump.fun on Solana let anyone create a token in minutes. The token first sells on a bonding curve, where the price rises automatically as more is bought, and then moves to a DEX pool once enough is raised."},
+    {n:4,text:"Risks and red flags\n\nMost newly launched memecoins lose most of their value. Common ways people lose money include the rug pull, where creators remove the liquidity from the pool and leave holders unable to sell at a fair price, and the pump and dump, where a group buys early, hypes the coin and sells to latecomers.\n\nSome token contracts are honeypots: their code lets people buy but blocks them from selling. Others keep a mint authority that lets the creator create new tokens at any time, diluting holders.\n\nBefore buying, check that liquidity is locked or burned, that the mint authority is renounced, that the contract is verified, and how much of the supply the top wallets hold. Only use money you can afford to lose. This chapter is education, not financial advice."}
+  ],
+  summary:[
+    {text:"A memecoin's value comes mostly from community and attention, not from cash flow or a product, so its price swings fast.",page:1,quote:"value comes mainly from community, attention and internet culture"},
+    {text:"Dogecoin started as a joke in December 2013 and runs on its own blockchain; most newer memecoins are tokens on Ethereum or Solana.",page:1,quote:"They are tokens issued on an existing chain"},
+    {text:"A tiny price per token doesn't make a coin cheap. Compare market cap: price × circulating supply.",page:2,quote:"market cap = price × circulating supply"},
+    {text:"If a few wallets hold much of the supply, they can sell into buyers and crash the price.",page:2,quote:"Always check holder concentration"},
+    {text:"New tokens trade in DEX liquidity pools that follow x × y = k, so big trades in small pools move the price a lot.",page:3,quote:"the product of the two reserves stays the same during a trade"},
+    {text:"Launchpads like pump.fun let anyone launch a token in minutes on a bonding curve before it moves to a DEX.",page:3,quote:"let anyone create a token in minutes"},
+    {text:"Rug pulls, pump and dumps, honeypot contracts and open mint authority are the main ways holders lose money.",page:4,quote:"Most newly launched memecoins lose most of their value"},
+    {text:"Before buying, check locked liquidity, renounced mint authority, a verified contract and top-holder share.",page:4,quote:"check that liquidity is locked or burned"}
+  ],
+  timeline:[
+    {date:"Dec 2013",event:"Dogecoin launches as a joke",why:"Billy Markus and Jackson Palmer base it on the Doge meme. It becomes the template for every memecoin after it.",page:1},
+    {date:"Aug 2020",event:"Shiba Inu (SHIB) launches on Ethereum",why:"An anonymous creator, Ryoshi, issues it as an ERC-20 token, showing memecoins don't need their own chain.",page:1},
+    {date:"2021",event:"Dogecoin passes $80 billion in market value",why:"Social media hype pushes a joke coin into one of the largest cryptocurrencies, briefly.",page:1},
+    {date:"Jan 2024",event:"Launchpads like pump.fun open on Solana",why:"Anyone can now launch a token in minutes, so the number of new memecoins explodes.",page:3}
+  ],
+  map:{nodes:[
+    {id:"meme",label:"Memecoin",note:"A token whose value rests on community and attention.",page:1},
+    {id:"hype",label:"Social hype",note:"Attention on social media is what moves the price.",page:1},
+    {id:"chain",label:"Blockchain",note:"Ethereum or Solana host most memecoin tokens; Dogecoin has its own.",page:1},
+    {id:"supply",label:"Supply",note:"Often huge, which makes the price per token tiny.",page:2},
+    {id:"mcap",label:"Market cap",note:"Price × circulating supply; the number to compare coins by.",page:2},
+    {id:"pool",label:"Liquidity pool",note:"Two-asset pool on a DEX that sets the price by x × y = k.",page:3},
+    {id:"curve",label:"Bonding curve",note:"Launchpad pricing where each purchase raises the price.",page:3},
+    {id:"slip",label:"Price impact",note:"Large trades in small pools move the price sharply.",page:3},
+    {id:"rug",label:"Rug pull",note:"Creators remove pool liquidity, leaving holders stuck.",page:4},
+    {id:"pd",label:"Pump and dump",note:"Insiders hype the coin and sell to latecomers.",page:4},
+    {id:"check",label:"Safety checks",note:"Locked liquidity, renounced mint, verified contract, holder spread.",page:4}
+  ],edges:[
+    {from:"hype",to:"meme",label:"drives price"},{from:"chain",to:"meme",label:"hosts"},{from:"meme",to:"supply",label:"has"},
+    {from:"supply",to:"mcap",label:"sets"},{from:"curve",to:"pool",label:"graduates to"},{from:"meme",to:"curve",label:"launches on"},
+    {from:"pool",to:"slip",label:"causes"},{from:"pool",to:"rug",label:"can be drained"},{from:"hype",to:"pd",label:"fuels"},
+    {from:"rug",to:"check",label:"avoid with"},{from:"pd",to:"check",label:"spot with"}
+  ]},
+  equations:[
+    {name:"Market capitalisation",expr:"Market cap = price × circulating supply",page:2,terms:[{sym:"price",meaning:"current price of one token"},{sym:"circulating supply",meaning:"tokens actually in the market now"}]},
+    {name:"Fully diluted value",expr:"FDV = price × total supply",page:2,terms:[{sym:"total supply",meaning:"includes tokens not yet released"}]},
+    {name:"Constant product pool",expr:"x × y = k,   price of token ≈ y ÷ x",page:3,terms:[{sym:"x",meaning:"tokens in the pool"},{sym:"y",meaning:"the paired asset in the pool, e.g. SOL"},{sym:"k",meaning:"stays constant during a trade"}]}
+  ],
+  flashcards:[
+    {front:"Memecoin",back:"A crypto token whose value comes mainly from community and attention, not cash flow or a product.",page:1},
+    {front:"Who created Dogecoin, and when?",back:"Billy Markus and Jackson Palmer, December 2013, as a joke.",page:1},
+    {front:"What kind of token is Shiba Inu?",back:"An ERC-20 token on Ethereum, launched August 2020.",page:1},
+    {front:"Market cap formula",back:"Price × circulating supply.",page:2},
+    {front:"Fully diluted value (FDV)",back:"Price × total supply, including tokens not yet released.",page:2},
+    {front:"Constant product rule",back:"x × y = k: the product of a pool's two reserves stays the same during a trade.",page:3},
+    {front:"Price impact (slippage)",back:"How much one trade moves the price; large in small pools.",page:3},
+    {front:"Bonding curve",back:"Launch pricing where the price rises automatically as more tokens are bought.",page:3},
+    {front:"Rug pull",back:"Creators pull the liquidity out of the pool so holders can't sell at a fair price.",page:4},
+    {front:"Honeypot contract",back:"Token code that lets you buy but blocks you from selling.",page:4},
+    {front:"Mint authority",back:"The power to create new tokens at any time; safer when renounced.",page:4}
+  ],
+  quiz:[
+    {type:"mc",q:"What mainly drives the value of a memecoin?",options:["Company profits","Community and attention","Government backing","Mining difficulty"],answer:1,explain:"Memecoins have no cash flows; their price follows community interest and hype.",page:1},
+    {type:"calc",q:"A token costs $0.00002 and 500,000,000,000 tokens are in circulation. What is its market cap in dollars?",answer:10000000,unit:"$",tolerance:1,explain:"0.00002 × 500,000,000,000 = 10,000,000 dollars.",page:2},
+    {type:"mc",q:"Token A costs $0.0001 and token B costs $5. Which statement is true?",options:["A is cheaper","B is more valuable","You can't tell without the supply","A will rise faster"],answer:2,explain:"Price per token says nothing on its own. Market cap needs the supply too.",page:2},
+    {type:"calc",q:"A pool holds 100 SOL and 1,000,000 tokens. What is k in x × y = k?",answer:100000000,unit:"",tolerance:0.5,explain:"1,000,000 × 100 = 100,000,000.",page:3},
+    {type:"mc",q:"Why does one big buy move the price a lot in a small pool?",options:["Fees double","Each token bought leaves fewer in the pool, so the next costs more","The DEX pauses trading","Supply is burned"],answer:1,explain:"Under x × y = k, removing tokens raises the price of the remaining ones.",page:3},
+    {type:"mc",q:"A contract lets you buy a token but stops you selling it. What is it called?",options:["Rug pull","Bonding curve","Honeypot","Airdrop"],answer:2,explain:"That's a honeypot contract.",page:4},
+    {type:"mc",q:"Which check helps protect against a rug pull?",options:["The coin has a dog logo","Liquidity is locked or burned","The price per token is tiny","It trends on social media"],answer:1,explain:"If liquidity is locked or burned, creators can't remove it from the pool.",page:4},
+    {type:"short",q:"Explain how a pump and dump works and who usually loses.",answer:"A group buys a coin early and cheaply, then hypes it to attract new buyers. When the price rises they sell to those latecomers, the price collapses, and the late buyers are left holding the losses.",explain:"Insiders profit by selling to the people their hype attracted.",page:4}
+  ]
+},
+{
+  id:"sample-resp", sample:true, subject:"Biology", title:"Cellular Respiration",
+  file:"BIOL 1010 · Lecture 9 notes (sample).pdf",
+  overview:"How cells release the energy stored in glucose and capture it as ATP. Four stages move from the cytosol into the mitochondrion, ending with oxygen accepting electrons.",
+  pages:[
+    {n:1,text:"Overview of cellular respiration\n\nCellular respiration is the set of reactions that cells use to break down glucose and capture the released energy as ATP. The overall equation is C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O, releasing about 2870 kJ per mole of glucose.\n\nRespiration happens in four stages: glycolysis in the cytosol, pyruvate oxidation and the citric acid cycle in the mitochondrial matrix, and oxidative phosphorylation on the inner mitochondrial membrane.\n\nIn total, the complete oxidation of one glucose molecule yields about 30 to 32 ATP in eukaryotic cells. Most of this ATP is made in the final stage."},
+    {n:2,text:"Glycolysis\n\nGlycolysis splits one molecule of glucose (6 carbons) into two molecules of pyruvate (3 carbons each). It takes place in the cytosol and does not require oxygen.\n\nThe energy investment phase uses 2 ATP to phosphorylate glucose. The payoff phase produces 4 ATP and 2 NADH, so the net yield of glycolysis is 2 ATP and 2 NADH per glucose.\n\nPhosphofructokinase catalyses the committed step of glycolysis and is the main point of regulation. It is inhibited by high levels of ATP and citrate."},
+    {n:3,text:"Pyruvate oxidation and the citric acid cycle\n\nPyruvate enters the mitochondrial matrix, where the pyruvate dehydrogenase complex converts each pyruvate into acetyl-CoA, releasing one CO₂ and producing one NADH.\n\nAcetyl-CoA joins oxaloacetate to form citrate, starting the citric acid cycle (Krebs cycle). Each turn of the cycle releases 2 CO₂ and produces 3 NADH, 1 FADH₂ and 1 ATP (or GTP). Oxaloacetate is regenerated at the end of each turn.\n\nBecause one glucose gives two acetyl-CoA, the cycle turns twice per glucose."},
+    {n:4,text:"Oxidative phosphorylation\n\nNADH and FADH₂ donate electrons to the electron transport chain, a series of protein complexes (I to IV) in the inner mitochondrial membrane. As electrons pass along the chain, complexes I, III and IV pump protons into the intermembrane space.\n\nOxygen is the final electron acceptor. It combines with electrons and protons to form water. Without oxygen, the chain stops.\n\nThe proton gradient drives ATP synthase, which makes ATP as protons flow back into the matrix. This coupling is called chemiosmosis. Each NADH yields about 2.5 ATP and each FADH₂ about 1.5 ATP.\n\nWhen oxygen is absent, cells use fermentation to regenerate NAD⁺ so glycolysis can continue: muscle cells make lactate, and yeast makes ethanol and CO₂."}
+  ],
+  summary:[
+    {text:"Respiration breaks down glucose and stores the released energy as ATP: C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O.",page:1,quote:"break down glucose and capture the released energy as ATP"},
+    {text:"It runs in four stages: glycolysis, pyruvate oxidation, the citric acid cycle and oxidative phosphorylation.",page:1,quote:"Respiration happens in four stages"},
+    {text:"Glycolysis happens in the cytosol without oxygen and nets 2 ATP and 2 NADH per glucose.",page:2,quote:"the net yield of glycolysis is 2 ATP and 2 NADH per glucose"},
+    {text:"Phosphofructokinase controls glycolysis and is slowed by high ATP and citrate.",page:2,quote:"It is inhibited by high levels of ATP and citrate"},
+    {text:"Each turn of the citric acid cycle gives 3 NADH, 1 FADH₂, 1 ATP and 2 CO₂, and it turns twice per glucose.",page:3,quote:"the cycle turns twice per glucose"},
+    {text:"The electron transport chain pumps protons, and ATP synthase uses the gradient to make most of the ATP.",page:4,quote:"This coupling is called chemiosmosis"},
+    {text:"Oxygen is the final electron acceptor; without it, fermentation regenerates NAD⁺.",page:4,quote:"Oxygen is the final electron acceptor"}
+  ],
+  map:{nodes:[
+    {id:"glu",label:"Glucose",note:"The 6-carbon fuel that respiration breaks down.",page:1},
+    {id:"gly",label:"Glycolysis",note:"Splits glucose into 2 pyruvate in the cytosol, netting 2 ATP and 2 NADH.",page:2},
+    {id:"pyr",label:"Pyruvate",note:"The 3-carbon product of glycolysis; it enters the mitochondrion.",page:2},
+    {id:"aco",label:"Acetyl-CoA",note:"Made from pyruvate by the pyruvate dehydrogenase complex, releasing CO₂.",page:3},
+    {id:"tca",label:"Citric acid cycle",note:"Oxidises acetyl-CoA, making NADH, FADH₂, ATP and CO₂.",page:3},
+    {id:"nad",label:"NADH + FADH₂",note:"Electron carriers that feed the electron transport chain.",page:4},
+    {id:"etc",label:"Electron transport",note:"Complexes I to IV pass electrons along and pump protons.",page:4},
+    {id:"o2",label:"O₂",note:"Final electron acceptor; forms water.",page:4},
+    {id:"syn",label:"ATP synthase",note:"Uses the proton gradient to make ATP (chemiosmosis).",page:4},
+    {id:"atp",label:"ATP",note:"About 30 to 32 per glucose in total.",page:1},
+    {id:"fer",label:"Fermentation",note:"Regenerates NAD⁺ when oxygen is absent: lactate or ethanol.",page:4}
+  ],edges:[
+    {from:"glu",to:"gly",label:"enters"},{from:"gly",to:"pyr",label:"makes 2"},{from:"pyr",to:"aco",label:"oxidised to"},
+    {from:"aco",to:"tca",label:"feeds"},{from:"tca",to:"nad",label:"produces"},{from:"gly",to:"nad",label:"2 NADH"},
+    {from:"nad",to:"etc",label:"donate e⁻"},{from:"etc",to:"o2",label:"e⁻ to"},{from:"etc",to:"syn",label:"H⁺ gradient"},
+    {from:"syn",to:"atp",label:"makes"},{from:"pyr",to:"fer",label:"no O₂"}
+  ]},
+  equations:[
+    {name:"Overall respiration",expr:"C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O   ΔG ≈ −2870 kJ mol⁻¹",page:1,terms:[{sym:"C₆H₁₂O₆",meaning:"glucose, the fuel"},{sym:"O₂",meaning:"oxygen, the final electron acceptor"},{sym:"ΔG",meaning:"energy released per mole of glucose"}]},
+    {name:"Net glycolysis",expr:"Glucose + 2 NAD⁺ + 2 ADP + 2 Pᵢ → 2 Pyruvate + 2 NADH + 2 ATP",page:2,terms:[{sym:"NAD⁺",meaning:"electron carrier, reduced to NADH"},{sym:"Pᵢ",meaning:"inorganic phosphate"}]},
+    {name:"ATP from electron carriers",expr:"ATP ≈ 2.5 × NADH + 1.5 × FADH₂",page:4,terms:[{sym:"2.5",meaning:"ATP per NADH via the electron transport chain"},{sym:"1.5",meaning:"ATP per FADH₂, which enters later in the chain"}]}
+  ],
+  flashcards:[
+    {front:"Where does glycolysis happen?",back:"In the cytosol. It does not need oxygen.",page:2},
+    {front:"Net yield of glycolysis per glucose",back:"2 ATP and 2 NADH (4 ATP made, 2 ATP invested).",page:2},
+    {front:"Committed, regulated step of glycolysis",back:"Phosphofructokinase. Inhibited by high ATP and citrate.",page:2},
+    {front:"What converts pyruvate to acetyl-CoA?",back:"The pyruvate dehydrogenase complex, releasing CO₂ and making NADH.",page:3},
+    {front:"Products of one turn of the citric acid cycle",back:"3 NADH, 1 FADH₂, 1 ATP (or GTP), 2 CO₂.",page:3},
+    {front:"What is regenerated at the end of each cycle turn?",back:"Oxaloacetate.",page:3},
+    {front:"Final electron acceptor of the electron transport chain",back:"Oxygen, which forms water.",page:4},
+    {front:"Chemiosmosis",back:"ATP synthase making ATP as protons flow back into the matrix down their gradient.",page:4},
+    {front:"ATP per NADH and per FADH₂",back:"About 2.5 and 1.5.",page:4},
+    {front:"Why do cells ferment without oxygen?",back:"To regenerate NAD⁺ so glycolysis can keep making ATP.",page:4}
+  ],
+  quiz:[
+    {type:"mc",q:"Which stage of respiration takes place in the cytosol?",options:["Glycolysis","Citric acid cycle","Pyruvate oxidation","Oxidative phosphorylation"],answer:0,explain:"Glycolysis runs in the cytosol; the other stages are in the mitochondrion.",page:1},
+    {type:"mc",q:"What is the net ATP yield of glycolysis per glucose?",options:["4 ATP","2 ATP","36 ATP","1 ATP"],answer:1,explain:"It makes 4 ATP but spends 2 in the investment phase, so the net is 2.",page:2},
+    {type:"mc",q:"Which molecule is regenerated at the end of each turn of the citric acid cycle?",options:["Citrate","Acetyl-CoA","Oxaloacetate","Pyruvate"],answer:2,explain:"Oxaloacetate is regenerated so it can combine with the next acetyl-CoA.",page:3},
+    {type:"calc",q:"One glucose gives 10 NADH and 2 FADH₂ in total. Using 2.5 ATP per NADH and 1.5 ATP per FADH₂, how many ATP come from oxidative phosphorylation?",answer:28,unit:"ATP",tolerance:0.01,explain:"10 × 2.5 + 2 × 1.5 = 25 + 3 = 28 ATP. Add 2 from glycolysis and 2 from the cycle to reach about 32.",page:4},
+    {type:"mc",q:"What happens to the electron transport chain if oxygen is absent?",options:["It speeds up","It switches to FADH₂ only","It stops","It pumps protons the other way"],answer:2,explain:"Oxygen is the final electron acceptor, so without it electrons cannot leave the chain.",page:4},
+    {type:"short",q:"Explain why yeast cells still produce some ATP when there is no oxygen.",answer:"Fermentation turns pyruvate into ethanol and CO₂, which regenerates NAD⁺. With NAD⁺ available, glycolysis keeps running and makes 2 ATP per glucose.",explain:"The key idea is regenerating NAD⁺ for glycolysis.",page:4}
+  ]
+},
+{
+  id:"sample-buffer", sample:true, subject:"Chemistry", title:"Acid–Base Equilibria and Buffers",
+  file:"CHEM 1020 · Chapter 16 excerpt (sample).pdf",
+  overview:"How weak acids reach equilibrium, how pH is defined, and how buffers resist pH change. Includes the Henderson–Hasselbalch equation and titration curves.",
+  pages:[
+    {n:1,text:"Acids, bases and Ka\n\nIn the Brønsted–Lowry model, an acid is a proton (H⁺) donor and a base is a proton acceptor. When an acid HA donates a proton to water, it forms its conjugate base A⁻: HA + H₂O ⇌ H₃O⁺ + A⁻.\n\nStrong acids such as HCl dissociate completely in water. Weak acids such as acetic acid dissociate only partly, and their strength is described by the acid dissociation constant Ka = [H₃O⁺][A⁻] / [HA].\n\nIt is often more convenient to use pKa = −log Ka. A smaller pKa means a stronger acid. Acetic acid has a pKa of 4.76 at 25 °C."},
+    {n:2,text:"pH and the ion product of water\n\nThe pH of a solution is defined as pH = −log[H₃O⁺]. A solution with [H₃O⁺] = 1.0 × 10⁻³ M has a pH of 3.00.\n\nWater ionises slightly. The ion product of water is Kw = [H₃O⁺][OH⁻] = 1.0 × 10⁻¹⁴ at 25 °C. Taking logarithms gives pH + pOH = 14.00 at 25 °C.\n\nA neutral solution at 25 °C has pH 7.00. Acidic solutions have pH below 7 and basic solutions have pH above 7."},
+    {n:3,text:"Buffers\n\nA buffer is a solution that resists changes in pH when small amounts of acid or base are added. It contains a weak acid and its conjugate base in similar amounts, for example acetic acid and sodium acetate.\n\nThe pH of a buffer is given by the Henderson–Hasselbalch equation: pH = pKa + log([A⁻]/[HA]). When the concentrations of acid and conjugate base are equal, pH = pKa.\n\nA buffer works best within about one pH unit of its pKa. Added H₃O⁺ is consumed by A⁻, and added OH⁻ is consumed by HA."},
+    {n:4,text:"Titration curves\n\nIn a titration, a solution of known concentration is added until the equivalence point, where moles of added base equal the moles of acid originally present.\n\nFor a weak acid titrated with a strong base, the pH at the half-equivalence point equals the pKa of the acid. The pH at the equivalence point is above 7, because the conjugate base A⁻ reacts with water to form OH⁻.\n\nAn indicator should change colour near the equivalence pH. Phenolphthalein, which changes between pH 8.2 and 10, suits weak acid–strong base titrations."}
+  ],
+  summary:[
+    {text:"A Brønsted–Lowry acid donates a proton; a weak acid HA forms its conjugate base A⁻ in an equilibrium with water.",page:1,quote:"an acid is a proton (H⁺) donor"},
+    {text:"Ka measures how far a weak acid dissociates; a smaller pKa means a stronger acid.",page:1,quote:"A smaller pKa means a stronger acid"},
+    {text:"pH = −log[H₃O⁺], and at 25 °C pH + pOH = 14.00 because Kw = 1.0 × 10⁻¹⁴.",page:2,quote:"pH + pOH = 14.00 at 25 °C"},
+    {text:"A buffer is a weak acid with its conjugate base, and it resists pH change.",page:3,quote:"resists changes in pH when small amounts of acid or base are added"},
+    {text:"Henderson–Hasselbalch gives buffer pH: pH = pKa + log([A⁻]/[HA]). Equal amounts give pH = pKa.",page:3,quote:"When the concentrations of acid and conjugate base are equal, pH = pKa"},
+    {text:"At the half-equivalence point of a weak acid titration, pH equals pKa; at equivalence the pH is above 7.",page:4,quote:"the pH at the half-equivalence point equals the pKa of the acid"}
+  ],
+  map:{nodes:[
+    {id:"wa",label:"Weak acid HA",note:"Dissociates only partly in water.",page:1},
+    {id:"cb",label:"Conjugate base A⁻",note:"What remains after HA donates a proton.",page:1},
+    {id:"ka",label:"Ka / pKa",note:"Equilibrium constant for dissociation; pKa = −log Ka.",page:1},
+    {id:"ph",label:"pH",note:"−log[H₃O⁺]; pH + pOH = 14 at 25 °C.",page:2},
+    {id:"kw",label:"Kw",note:"Ion product of water, 1.0 × 10⁻¹⁴ at 25 °C.",page:2},
+    {id:"buf",label:"Buffer",note:"Weak acid and conjugate base together; resists pH change.",page:3},
+    {id:"hh",label:"Henderson–Hasselbalch",note:"pH = pKa + log([A⁻]/[HA]).",page:3},
+    {id:"tit",label:"Titration",note:"Adding base of known concentration up to the equivalence point.",page:4},
+    {id:"half",label:"Half-equivalence",note:"Point in the titration where pH = pKa.",page:4},
+    {id:"ind",label:"Indicator",note:"Changes colour near the equivalence pH, e.g. phenolphthalein.",page:4}
+  ],edges:[
+    {from:"wa",to:"cb",label:"donates H⁺"},{from:"wa",to:"ka",label:"described by"},{from:"ka",to:"hh",label:"used in"},
+    {from:"wa",to:"buf",label:"part of"},{from:"cb",to:"buf",label:"part of"},{from:"hh",to:"ph",label:"predicts"},
+    {from:"kw",to:"ph",label:"links pH, pOH"},{from:"tit",to:"half",label:"passes"},{from:"half",to:"ka",label:"pH = pKa"},{from:"tit",to:"ind",label:"tracked by"}
+  ]},
+  equations:[
+    {name:"Acid dissociation",expr:"HA + H₂O ⇌ H₃O⁺ + A⁻",page:1,terms:[{sym:"HA",meaning:"weak acid"},{sym:"A⁻",meaning:"its conjugate base"},{sym:"⇌",meaning:"reaction at equilibrium"}]},
+    {name:"Acid dissociation constant",expr:"Ka = [H₃O⁺][A⁻] / [HA],   pKa = −log Ka",page:1,terms:[{sym:"[ ]",meaning:"concentration at equilibrium, mol L⁻¹"},{sym:"pKa",meaning:"smaller value means stronger acid"}]},
+    {name:"pH and water",expr:"pH = −log[H₃O⁺],   Kw = [H₃O⁺][OH⁻] = 1.0 × 10⁻¹⁴",page:2,terms:[{sym:"Kw",meaning:"ion product of water at 25 °C"},{sym:"pH + pOH",meaning:"equals 14.00 at 25 °C"}]},
+    {name:"Henderson–Hasselbalch",expr:"pH = pKa + log ( [A⁻] / [HA] )",page:3,terms:[{sym:"[A⁻]",meaning:"conjugate base concentration"},{sym:"[HA]",meaning:"weak acid concentration"},{sym:"log 1 = 0",meaning:"so equal amounts give pH = pKa"}]}
+  ],
+  flashcards:[
+    {front:"Brønsted–Lowry acid",back:"A proton (H⁺) donor.",page:1},
+    {front:"Ka expression for HA",back:"Ka = [H₃O⁺][A⁻] / [HA]",page:1},
+    {front:"Smaller pKa means…",back:"A stronger acid.",page:1},
+    {front:"pKa of acetic acid at 25 °C",back:"4.76",page:1},
+    {front:"Kw at 25 °C",back:"1.0 × 10⁻¹⁴, so pH + pOH = 14.00",page:2},
+    {front:"What is in a buffer?",back:"A weak acid and its conjugate base in similar amounts.",page:3},
+    {front:"Henderson–Hasselbalch equation",back:"pH = pKa + log([A⁻]/[HA])",page:3},
+    {front:"Useful buffer range",back:"About pKa ± 1 pH unit.",page:3},
+    {front:"pH at half-equivalence (weak acid + strong base)",back:"Equal to the pKa.",page:4},
+    {front:"Indicator for weak acid–strong base titration",back:"Phenolphthalein (changes at pH 8.2 to 10).",page:4}
+  ],
+  quiz:[
+    {type:"mc",q:"Which statement describes a Brønsted–Lowry base?",options:["A proton donor","A proton acceptor","An electron-pair donor only","A substance that raises [H₃O⁺]"],answer:1,explain:"Bases accept protons; acids donate them.",page:1},
+    {type:"calc",q:"What is the pH of a solution with [H₃O⁺] = 1.0 × 10⁻³ M?",answer:3.00,unit:"",tolerance:0.02,explain:"pH = −log(1.0 × 10⁻³) = 3.00.",page:2},
+    {type:"calc",q:"A buffer contains 0.20 M sodium acetate and 0.10 M acetic acid (pKa 4.76). What is its pH?",answer:5.06,unit:"",tolerance:0.02,explain:"pH = 4.76 + log(0.20/0.10) = 4.76 + 0.30 = 5.06.",page:3},
+    {type:"mc",q:"At the half-equivalence point of a weak acid–strong base titration, the pH is…",options:["7.00","Equal to the pKa","Equal to 14 − pKa","Above the equivalence pH"],answer:1,explain:"Half the acid has become A⁻, so [A⁻] = [HA] and pH = pKa.",page:4},
+    {type:"mc",q:"Why is the equivalence pH above 7 when acetic acid is titrated with NaOH?",options:["Excess NaOH is always present","Acetate reacts with water to form OH⁻","Acetic acid is a strong acid","Kw increases during titration"],answer:1,explain:"The conjugate base acetate is a weak base and makes the solution slightly basic.",page:4},
+    {type:"short",q:"Explain how an acetic acid/acetate buffer limits the pH change when a small amount of HCl is added.",answer:"The added H₃O⁺ reacts with acetate (A⁻) to form acetic acid (HA). The ratio [A⁻]/[HA] changes only a little, so by Henderson–Hasselbalch the pH changes only a little.",explain:"Added acid is consumed by the conjugate base.",page:3}
+  ]
+}];
+
+/* ---------- Storage (saved on this device, so saved lessons work offline) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("serinote:"+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("serinote:"+k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+};
+let userLessons = store.get("lessons", []);
+const subjClass = s => s === "Biology" || s === "Chemistry" ? s : "Other";
+const allLessons = () => [...userLessons, ...SAMPLES];
+const byId = id => allLessons().find(l => l.id === id);
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const h = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pg = n => n ? `<button class="pg" data-page="${+n}" title="Open page ${+n}">p.${+n}</button>` : "";
+const DAY = 864e5;
+const INTERVALS = [0, 1, 3, 7, 16, 35];
+const norm = t => String(t || "").replace(/[\u2018\u2019\u02bc`]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/[\u2013\u2014]/g, "-");
+function quoteRegex(q){
+  const words = norm(q).trim().split(/\s+/).filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return words.length ? new RegExp(words.join("[\\s\\u00ad-]+"), "i") : null;
+}
+function pageText(lesson, n){ const p = lesson.pages.find(p => p.n === n); return p ? p.text : ""; }
+function verified(lesson, item){ const re = quoteRegex(item.quote); return !!(re && re.test(norm(pageText(lesson, item.page)))); }
+
+/* ---------- State ---------- */
+const state = { view:"library", lessonId:null, tab:"summary", page:1, quote:null, mapSel:null, job:null };
+
+/* ---------- Library ---------- */
+function dueCount(lesson){
+  const s = store.get("srs:"+lesson.id, {}); const now = Date.now();
+  return lesson.flashcards.filter((_, i) => !s[i] || s[i].due <= now).length;
+}
+function renderLibrary(){
+  const job = state.job;
+  const card = l => {
+    const best = store.get("quiz:"+l.id, null);
+    return `<button class="lcard" data-open="${h(l.id)}">
+      <div class="meta"><span class="chip ${subjClass(l.subject)}">${h(l.subject)}</span>${l.sample ? "<span>Sample</span>" : ""}<span>${l.pages.length} pages</span></div>
+      <h3>${h(l.title)}</h3>
+      <p>${h(l.overview)}</p>
+      <div class="row"><span class="meta"><span class="chip due">${dueCount(l)} cards due</span>${best ? `<span>Quiz best ${best.best}%</span>` : ""}</span>
+      ${l.sample ? "" : `<span class="del" role="button" tabindex="0" data-del="${h(l.id)}">Delete</span>`}</div>
+    </button>`;
+  };
+  $("#app").innerHTML = `
+  <section class="lib-head">
+    <div>
+      <h1>Turn any reading into a lesson you can see.</h1>
+      <p>Drop in a PDF on any subject: a biology chapter, chemistry notes, or a whole book on memecoins. Serinote builds a summary, a concept map, a timeline, the key formulas, flashcards and a quiz, and you can ask it questions. Every point links back to the page it came from, so you can check it.</p>
+    </div>
+    <div class="drop" id="drop">
+      <h2>${HOSTED ? "Try a sample lesson" : "Make a lesson from a PDF"}</h2>
+      ${HOSTED ? "" : `<small>Up to 300 pages, so a whole book fits. Text-based PDFs work best; scanned pages can't be read yet.</small>`}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        ${HOSTED ? "" : `<button class="btn primary" id="pick" ${job && job.running ? "disabled" : ""}>Choose PDF</button>`}
+        <button class="btn" data-open="sample-meme">Try the memecoin sample</button>
+      </div>
+      ${HOSTED ? `<small>Making lessons from your own PDFs is coming soon here. For now, open a sample lesson to see everything Serinote does.</small>` : `<small>Or drag a PDF or .txt file here. Making a lesson needs a connection; saved lessons open offline.</small>`}
+    </div>
+  </section>
+  ${job ? renderJob(job) : ""}
+  <p class="section-label">Your lessons</p>
+  <div class="cards">${allLessons().map(card).join("")}</div>
+  <p class="note">Prototype. Lessons you make are saved in this browser only. The three sample lessons are built in.</p>`;
+}
+function renderJob(j){
+  const steps = ["Reading pages","Finding the structure and writing the lesson","Checking every point against its page","Saving the lesson"];
+  return `<section class="progress" aria-live="polite">
+    <h2>${h(j.name)}</h2>
+    <ol class="steps">${steps.map((s, i) => `<li class="${i < j.step ? "done" : i === j.step && j.running ? "now" : ""}"><b>${i < j.step ? "✓" : i + 1}</b><span>${h(s)}${i === 0 && j.pages ? ` · ${j.read}/${j.pages} pages` : ""}</span></li>`).join("")}</ol>
+    ${j.stream ? `<div class="stream">${h(j.stream.slice(-300))}</div>` : ""}
+    ${j.error ? `<p class="err">${h(j.error)}</p>` : ""}
+    ${j.running ? `<div style="margin-top:12px"><button class="btn sm" id="stop">Stop</button></div>` : `<div style="margin-top:12px"><button class="btn sm" id="dismiss">Dismiss</button></div>`}
+  </section>`;
+}
+
+/* ---------- PDF to lesson ---------- */
+function fitPages(pages, max){
+  const total = pages.reduce((a, p) => a + p.text.length, 0), r = Math.min(1, max / Math.max(1, total));
+  return pages.map(p => `[[Page ${p.n}]]\n${r < 1 ? p.text.slice(0, Math.max(300, Math.floor(p.text.length * r))) : p.text}`).join("\n\n");
+}
+function splitText(t){
+  const pages = []; let cur = "";
+  for (const para of t.replace(/\r/g, "").split(/\n/)){
+    if (cur.length + para.length > 3000 && cur.length > 1200){ pages.push(cur.trim()); cur = ""; }
+    cur += para + "\n";
+  }
+  if (cur.trim()) pages.push(cur.trim());
+  return pages.map((text, i) => ({n:i + 1, text}));
+}
+let sampleFn; const sampleReady = (async () => { try{ sampleFn = await window.claude?.use?.("sample"); }catch(e){ sampleFn = null; } if (sampleFn && state.view === "lesson") render(); })();
+let ctl = null;
+async function makeLesson(file){
+  if (state.job && state.job.running) return;
+  const isText = /\.(txt|md)$/i.test(file.name) || file.type === "text/plain";
+  if (!isText && !/\.pdf$/i.test(file.name) && file.type !== "application/pdf"){ state.job = {name:file.name, step:0, error:"Serinote reads PDF and plain text files. Choose a .pdf or .txt file."}; return render(); }
+  if (file.size > 50 * 1024 * 1024){ state.job = {name:file.name, step:0, error:"This PDF is over 50 MB. Choose a smaller file or split it."}; return render(); }
+  const job = state.job = {name:file.name, step:0, running:true, pages:0, read:0};
+  render();
+  try{
+    let pages = [];
+    if (isText){ pages = splitText(await file.text()).slice(0, 300); job.pages = job.read = pages.length; render(); }
+    else {
+    if (!window.pdfjsLib) throw new Error("The PDF reader didn't load. Check your connection and reload the page.");
+    const pdf = await pdfjsLib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+    const n = Math.min(pdf.numPages, 300); job.pages = n; render();
+    for (let i = 1; i <= n; i++){
+      const tc = await (await pdf.getPage(i)).getTextContent();
+      let t = ""; for (const it of tc.items){ t += it.str + (it.hasEOL ? "\n" : " "); }
+      t = t.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+      pages.push({n:i, text:t}); job.read = i; if (i % 3 === 0 || i === n) render();
+    }
+    }
+    const chars = pages.reduce((a, p) => a + p.text.length, 0);
+    if (chars < 200) throw new Error("No readable text was found. This looks like a scanned PDF, which Serinote can't read yet.");
+    job.step = 1; render();
+    await sampleReady;
+    if (!sampleFn) throw new Error("Making a lesson needs Claude, which isn't available in this view. You can still open the sample lessons.");
+    ctl = new AbortController();
+    const gen = max => sampleFn.json(PROMPT + fitPages(pages, max), {signal: ctl.signal, onText: ({text}) => { job.stream = text; renderJobOnly(); }});
+    let raw;
+    try{ raw = await gen(200000); }
+    catch(e){ if (e && e.code === "prompt_too_large"){ job.stream = ""; raw = await gen(100000); } else throw e; }
+    job.step = 2; job.stream = ""; render();
+    const lesson = cleanLesson(raw, pages, file.name);
+    job.step = 3; render();
+    userLessons = [lesson, ...userLessons];
+    if (!store.set("lessons", userLessons)){
+      lesson.pages = lesson.pages.map(p => ({n:p.n, text:p.text.slice(0, 1500)}));
+      store.set("lessons", userLessons);
+    }
+    state.job = null; openLesson(lesson.id);
+  }catch(e){
+    job.running = false;
+    job.error = e && e.code ? errCopy(e.code) : (e && e.message) || "Something went wrong reading this PDF.";
+    if (e && e.code === "cancelled") state.job = null;
+    render();
+  }
+}
+function errCopy(code){
+  return ({not_granted:"Serinote needs your permission to use Claude to make lessons. Allow it when asked, or open a sample lesson.",
+    rate_limited:"You've reached the limit for now. Try again in a little while.",
+    session_expired:"Sign in to Claude again, then retry.",
+    prompt_too_large:"This PDF has too much text for one lesson. Try a single chapter.",
+    invalid_json:"The lesson came back incomplete. Try again.",
+    refused:"Claude couldn't make a lesson from this document.",
+    sampling_disabled:"Claude isn't available for this account, so new lessons can't be made here."})[code] || "The connection dropped while making the lesson. Try again.";
+}
+const PROMPT = `You are Serinote, building a visual, interactive study lesson for a student or self-learner from the PDF text below. It may be on any subject: science, finance, crypto, history, business and so on. Pages are marked [[Page N]].
+Reply with only one JSON object, no prose, in exactly this shape:
+{"title": string (short lesson title),
+ "subject": string (one or two words, e.g. "Biology", "Chemistry", "Crypto", "History"),
+ "overview": string (two plain sentences on what the reading covers),
+ "summary": [ {"text": string (one key point, at most 30 words), "page": integer, "quote": string (6 to 12 consecutive words copied exactly from that page)} ] (5 to 8 items for a short reading, up to 12 for a book, in reading order),
+ "map": {"nodes": [ {"id": string, "label": string (at most 3 words), "note": string (one sentence), "page": integer} ] (6 to 12 nodes, the main ideas),
+         "edges": [ {"from": node id, "to": node id, "label": string (1 to 3 words, how they relate)} ] (connect every node)},
+ "timeline": [ {"date": string (as written, e.g. "Dec 2013"), "event": string (short), "why": string (one sentence on why it matters), "page": integer} ] (only dated events from the text, oldest first; 0 to 12),
+ "equations": [ {"name": string, "expr": string, "terms": [ {"sym": string, "meaning": string} ], "page": integer} ] (only equations, reactions or formulas that appear in the text, including simple ones like market cap = price × supply; 0 to 6),
+ "flashcards": [ {"front": string, "back": string, "page": integer} ] (8 to 14 key terms, definitions and formulas),
+ "quiz": [ 8 to 10 questions, each one of:
+    {"type":"mc","q": string,"options":[4 strings],"answer": index 0-3,"explain": string,"page": integer}
+    {"type":"calc","q": string,"answer": number,"unit": string,"tolerance": number,"explain": string (show the working),"page": integer}
+    {"type":"short","q": string,"answer": string (model answer),"explain": string,"page": integer} ]
+   (at least 5 mc; include calc questions only when the text gives numbers to compute with; vary the correct mc index) }
+Rules: skip front matter such as disclaimers, legal notices, tables of contents and referral links. For a long book, cover every major chapter. Use only facts stated in the text. Every page number must be the page where that fact appears. Write equations and chemical formulas in Unicode notation (subscripts like ₂, superscripts like ⁻¹, arrows → and ⇌, × 10⁻³), never LaTeX. Keep language plain.
+
+`;
+function cleanLesson(r, pages, fname){
+  if (!r || typeof r !== "object") throw {code:"invalid_json"};
+  const n = pages.length, okP = p => { p = Math.round(+p); return p >= 1 && p <= n ? p : null; };
+  const arr = a => Array.isArray(a) ? a : [];
+  const str = s => typeof s === "string" ? s.trim() : "";
+  const nodes = arr(r.map && r.map.nodes).filter(x => x && str(x.id) && str(x.label)).slice(0, 14).map(x => ({id:str(x.id), label:str(x.label), note:str(x.note), page:okP(x.page)}));
+  const ids = new Set(nodes.map(x => x.id));
+  const lesson = {
+    id:"l-" + Date.now().toString(36), sample:false, created:Date.now(), file:fname,
+    title:str(r.title) || fname.replace(/\.pdf$/i, ""),
+    subject:str(r.subject).slice(0, 24) || "General",
+    overview:str(r.overview), pages:pages.map(p => ({n:p.n, text:p.text.slice(0, 8000)})),
+    summary:arr(r.summary).filter(x => x && str(x.text)).slice(0, 8).map(x => ({text:str(x.text), page:okP(x.page), quote:str(x.quote)})),
+    map:{nodes, edges:arr(r.map && r.map.edges).filter(e => e && ids.has(e.from) && ids.has(e.to) && e.from !== e.to).map(e => ({from:e.from, to:e.to, label:str(e.label)}))},
+    timeline:arr(r.timeline).filter(x => x && str(x.date) && str(x.event)).slice(0, 16).map(x => ({date:str(x.date), event:str(x.event), why:str(x.why), page:okP(x.page)})),
+    equations:arr(r.equations).filter(x => x && str(x.expr)).slice(0, 8).map(x => ({name:str(x.name), expr:str(x.expr), page:okP(x.page), terms:arr(x.terms).filter(t => t && str(t.sym)).map(t => ({sym:str(t.sym), meaning:str(t.meaning)}))})),
+    flashcards:arr(r.flashcards).filter(x => x && str(x.front) && str(x.back)).slice(0, 20).map(x => ({front:str(x.front), back:str(x.back), page:okP(x.page)})),
+    quiz:arr(r.quiz).map(x => {
+      if (!x || !str(x.q)) return null;
+      const base = {q:str(x.q), explain:str(x.explain), page:okP(x.page)};
+      if (x.type === "mc" && arr(x.options).length >= 2 && Number.isInteger(+x.answer) && +x.answer < x.options.length) return {...base, type:"mc", options:x.options.map(String), answer:+x.answer};
+      if (x.type === "calc" && isFinite(+x.answer)) return {...base, type:"calc", answer:+x.answer, unit:str(x.unit), tolerance:Math.abs(+x.tolerance) || Math.max(Math.abs(+x.answer) * 0.01, 0.01)};
+      if (x.type === "short" && str(x.answer)) return {...base, type:"short", answer:str(x.answer)};
+      return null;
+    }).filter(Boolean).slice(0, 12)
+  };
+  if (!lesson.summary.length && !lesson.flashcards.length) throw {code:"invalid_json"};
+  return lesson;
+}
+
+/* ---------- Lesson ---------- */
+function openLesson(id){
+  const l = byId(id); if (!l) return;
+  Object.assign(state, {view:"lesson", lessonId:id, tab:"summary", page:(l.summary[0] && l.summary[0].page) || 1, quote:null, mapSel:null});
+  fc = null; quizAns = {};
+  render(); window.scrollTo(0, 0);
+}
+function renderLesson(){
+  const l = byId(state.lessonId); if (!l){ state.view = "library"; return renderLibrary(); }
+  const sv = {Biology:"bio", Chemistry:"chem"}[l.subject] || "accent";
+  document.documentElement.style.setProperty("--subj", `var(--${sv})`);
+  document.documentElement.style.setProperty("--subj-soft", `var(--${sv}-soft)`);
+  l.timeline = l.timeline || [];
+  const tabs = [["summary","Summary",l.summary.length],["map","Concept map",l.map.nodes.length],["timeline","Timeline",l.timeline.length],["eq","Formulas",l.equations.length],["cards","Flashcards",l.flashcards.length],["quiz","Quiz",l.quiz.length],["ask","Ask",""]].filter(t => t[2] !== 0);
+  if (!tabs.some(t => t[0] === state.tab)) state.tab = "summary";
+  $("#app").innerHTML = `<div class="lesson">
+    <div style="min-width:0">
+      <button class="back" id="toLib">← All lessons</button>
+      <div class="meta"><span class="chip ${subjClass(l.subject)}">${h(l.subject)}</span><span>${h(l.file)}</span><span>${l.pages.length} pages</span><span>${l.sample ? "Built-in sample" : "Saved on this device"}</span></div>
+      <h1 class="l-title">${h(l.title)}</h1>
+      <p class="l-over">${h(l.overview)}</p>
+      <div class="tabs" role="tablist">${tabs.map(([k, n, c]) => `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${n}<span class="n">${c}</span></button>`).join("")}</div>
+      <div id="pane"></div>
+    </div>
+    <aside class="source" id="source" aria-label="Source page"></aside>
+  </div>`;
+  renderPane(l); renderSource(l);
+}
+function renderPane(l){
+  const p = $("#pane");
+  if (state.tab === "summary"){
+    p.innerHTML = `<ol class="summary">${l.summary.map((s, i) => {
+      const v = s.quote ? verified(l, s) : null;
+      return `<li><span class="k">${String(i + 1).padStart(2, "0")}</span><div>${h(s.text)}${v === null ? "" : `<span class="vf ${v ? "" : "no"}">${v ? `✓ Found on page ${s.page}` : "Not matched word for word. Check the page."}</span>`}${xpBlock("s" + i)}</div><span>${s.page ? `<button class="pg" data-page="${s.page}" data-quote="${h(s.quote)}">p.${s.page}</button>` : ""}</span></li>`;
+    }).join("")}</ol>`;
+  } else if (state.tab === "map"){
+    p.innerHTML = l.map.nodes.length ? `<div class="mapbox">${mapSVG(l)}</div><div class="mapnote" id="mapnote">${mapNote(l)}</div>` : `<p class="empty">No concept map for this lesson.</p>`;
+  } else if (state.tab === "timeline"){
+    p.innerHTML = `<ol class="tl">${l.timeline.map((t, i) => `<li><span class="d">${h(t.date)}</span> ${pg(t.page)}<div class="ev">${h(t.event)}</div><div class="why">${h(t.why)}</div>${xpBlock("t" + i)}</li>`).join("")}</ol>`;
+  } else if (state.tab === "ask"){ renderAsk(l, p);
+  } else if (state.tab === "eq"){
+    p.innerHTML = l.equations.length ? `<div class="eqs">${l.equations.map(e => `<article class="eq"><div class="nm"><span>${h(e.name)}</span>${pg(e.page)}</div><div class="ex">${h(e.expr)}</div>${e.terms.length ? `<dl>${e.terms.map(t => `<dt>${h(t.sym)}</dt><dd>${h(t.meaning)}</dd>`).join("")}</dl>` : ""}</article>`).join("")}</div>`
+      : `<p class="empty">This reading has no equations or reactions.</p>`;
+  } else if (state.tab === "cards"){ renderCards(l, p); }
+  else if (state.tab === "quiz"){ renderQuiz(l, p); }
+}
+
+/* Concept map: layered layout, ideas flow left to right along the arrows */
+const layoutCache = {};
+function layout(l){
+  if (layoutCache[l.id]) return layoutCache[l.id];
+  const N = l.map.nodes, E = l.map.edges, ids = N.map(n => n.id);
+  const ins = {}, outs = {}, deg = {};
+  ids.forEach(id => { ins[id] = []; outs[id] = []; deg[id] = 0; });
+  E.forEach(e => { outs[e.from].push(e.to); ins[e.to].push(e.from); deg[e.from]++; deg[e.to]++; });
+  // longest-path layering from sources, ignoring edges that close a cycle
+  const layer = {}, seen = {};
+  const visit = (id, d, path) => { if (path.has(id)) return; if (layer[id] !== undefined && layer[id] >= d) return; layer[id] = d; path.add(id); outs[id].forEach(t => visit(t, d + 1, path)); path.delete(id); };
+  let roots = ids.filter(id => !ins[id].length); if (!roots.length) roots = [ids[0]];
+  roots.forEach(r => visit(r, 0, new Set()));
+  ids.forEach(id => { if (layer[id] === undefined) visit(id, 0, new Set()); });
+  const L = Math.max(...ids.map(id => layer[id])) + 1;
+  const cols = Array.from({length:L}, () => []);
+  ids.forEach(id => cols[layer[id]].push(id));
+  const pos = {};
+  cols.forEach(c => c.forEach((id, i) => pos[id] = i));
+  for (let pass = 0; pass < 4; pass++) cols.forEach((c, k) => { if (!k) return;
+    const bary = id => { const p = ins[id].filter(x => layer[x] < k); return p.length ? p.reduce((a, x) => a + pos[x] / Math.max(1, cols[layer[x]].length), 0) / p.length : pos[id] / c.length; };
+    c.sort((a, b) => bary(a) - bary(b)); c.forEach((id, i) => pos[id] = i); });
+  // long chains fold into two bands (left to right, then back right to left) so labels stay readable
+  const colW = 190, rowH = 70, fold = L > 5, B = fold ? Math.ceil(L / 2) : L;
+  const bandRows = [0, 1].map(bd => Math.max(0, ...cols.filter((_, k) => (k >= B) === !!bd).map(c => c.length)));
+  const bandH = bandRows.map(r => r * rowH);
+  const W = Math.max(640, B * colW + 20), H = Math.max(220, bandH[0] + (fold ? bandH[1] + 50 : 0) + 30);
+  const P = N.map(nd => { const k = layer[nd.id], c = cols[k], i = c.indexOf(nd.id), bd = fold && k >= B ? 1 : 0;
+    const col = bd ? B - 1 - (k - B) : k, top = bd ? bandH[0] + 65 : 15;
+    return {id:nd.id, w:Math.min(172, nd.label.length * 7.4 + 28), x:10 + colW / 2 + col * ((W - 20 - colW) / Math.max(1, B - 1)),
+      y:top + bandH[bd] / 2 + (i - (c.length - 1) / 2) * rowH + (col % 2 && c.length === 1 ? 14 : 0)}; });
+  const idx = Object.fromEntries(P.map((p, i) => [p.id, i]));
+  const maxDeg = Math.max(...ids.map(id => deg[id]));
+  return layoutCache[l.id] = {W, H, P, idx, hub:new Set(ids.filter(id => deg[id] >= Math.max(3, maxDeg)))};
+}
+function mapSVG(l){
+  const {W, H, P, idx, hub} = layout(l);
+  const clip = (A, B) => { const dx = B.x - A.x, dy = B.y - A.y; const s = Math.min(Math.abs(dx) > 0 ? (B.w / 2 + 4) / Math.abs(dx) : 1e9, Math.abs(dy) > 0 ? 21 / Math.abs(dy) : 1e9, 1); return {x:B.x - dx * s, y:B.y - dy * s}; };
+  const edges = l.map.edges.map(e => { const A = P[idx[e.from]], B = P[idx[e.to]]; const s0 = clip(B, A), t0 = clip(A, B);
+    const mx = (s0.x + t0.x) / 2, my = (s0.y + t0.y) / 2;
+    return `<path class="edge" d="M${s0.x} ${s0.y} C${mx} ${s0.y} ${mx} ${t0.y} ${t0.x} ${t0.y}" marker-end="url(#ar)"/>${e.label ? `<text class="elab" x="${mx}" y="${my - 4}" text-anchor="middle">${h(e.label)}</text>` : ""}`; }).join("");
+  const nodes = l.map.nodes.map((n, i) => { const p = P[i];
+    return `<g class="node ${hub.has(n.id) ? "hub" : ""} ${state.mapSel === n.id ? "sel" : ""}" data-node="${h(n.id)}" tabindex="0" role="button" aria-label="${h(n.label)}"><rect x="${p.x - p.w / 2}" y="${p.y - 17}" width="${p.w}" height="34" rx="17"/><text x="${p.x}" y="${p.y + 4.5}" text-anchor="middle">${h(n.label)}</text></g>`; }).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Concept map of ${h(l.title)}"><defs><marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="var(--ink-2)"/></marker></defs>${edges}${nodes}</svg>`;
+}
+function mapNote(l){
+  const n = l.map.nodes.find(n => n.id === state.mapSel);
+  if (!n) return `<span class="empty">Tap an idea to see what it means and where it comes from.</span>`;
+  const links = l.map.edges.filter(e => e.from === n.id || e.to === n.id).map(e => {
+    const other = l.map.nodes.find(x => x.id === (e.from === n.id ? e.to : e.from));
+    return e.from === n.id ? `${h(e.label)} → ${h(other.label)}` : `${h(other.label)} → ${h(e.label)}`; });
+  return `<b>${h(n.label)}</b> ${pg(n.page)}<div>${h(n.note)}</div>${links.length ? `<div class="meta" style="margin-top:6px">${links.join(" · ")}</div>` : ""}${xpBlock("m" + n.id)}`;
+}
+
+/* Flashcards: Leitner boxes with review dates */
+let fc = null;
+function renderCards(l, p){
+  const s = store.get("srs:" + l.id, {}); const now = Date.now();
+  const counts = [1, 2, 3, 4, 5].map(b => l.flashcards.filter((_, i) => (s[i] ? s[i].box : 1) === b).length);
+  if (!fc || fc.id !== l.id){ fc = {id:l.id, queue:l.flashcards.map((_, i) => i).filter(i => !s[i] || s[i].due <= now), flipped:false, done:0}; }
+  const bar = `<div class="fc-bar"><span class="stat">${fc.queue.length} due now · ${fc.done} reviewed this session</span>
+    <span class="boxes" title="Cards per box, from new (left) to well known (right)">${counts.map(c => `<span style="height:${6 + c / Math.max(1, l.flashcards.length) * 24}px" title="${c}"></span>`).join("")}</span></div>`;
+  if (!fc.queue.length){
+    const next = Math.min(...l.flashcards.map((_, i) => s[i] ? s[i].due : now));
+    const days = Math.max(1, Math.round((next - now) / DAY));
+    p.innerHTML = bar + `<div class="done-box"><h3>All caught up</h3><p class="empty">The next cards come back in about ${days} day${days > 1 ? "s" : ""}. Cards you mark "Again" return sooner.</p><button class="btn" id="studyAll">Review all ${l.flashcards.length} anyway</button></div>`;
+    return;
+  }
+  const c = l.flashcards[fc.queue[0]];
+  p.innerHTML = bar + `<div class="flash ${fc.flipped ? "flipped" : ""}" id="flash"><div class="inner">
+      <div class="face f"><span class="lbl">Term · tap to flip</span><div class="txt">${h(c.front)}</div></div>
+      <div class="face b"><span class="lbl">Answer ${pg(c.page)}</span><div class="txt">${h(c.back)}</div></div></div></div>
+    <div class="rate">${fc.flipped ? `<button class="btn again" data-rate="0">Again</button><button class="btn" data-rate="1">Hard</button><button class="btn good" data-rate="2">Good</button><button class="btn" data-rate="3">Easy</button>` : `<button class="btn primary" id="flip">Show answer</button>`}</div>`;
+}
+function rate(l, r){
+  const s = store.get("srs:" + l.id, {}); const i = fc.queue.shift(); const cur = s[i] ? s[i].box : 1;
+  const box = r === 0 ? 1 : r === 1 ? cur : Math.min(5, cur + r - 1);
+  s[i] = {box, due:Date.now() + (r === 0 ? 0 : INTERVALS[box] * DAY)};
+  if (r === 0) fc.queue.push(i);
+  store.set("srs:" + l.id, s); fc.flipped = false; fc.done++; renderPane(l);
+}
+
+/* Quiz */
+let quizAns = {};
+function renderQuiz(l, p){
+  const rec = store.get("quiz:" + l.id, null);
+  const answered = Object.keys(quizAns).length, right = Object.values(quizAns).filter(a => a.ok).length;
+  const pct = l.quiz.length ? Math.round(right / l.quiz.length * 100) : 0;
+  const head = `<div class="score"><div><div class="big">${right}/${l.quiz.length}</div><div class="sub">${answered < l.quiz.length ? `${answered} of ${l.quiz.length} answered` : `Finished · ${pct}%`}</div></div>
+    ${rec ? `<div class="sub">First attempt ${rec.first}% · Best ${rec.best}%${rec.best > rec.first ? ` · <span class="gain">+${rec.best - rec.first} points</span>` : ""}</div>` : `<div class="sub">Your first finished attempt is saved so you can see how much you improve.</div>`}
+    ${answered ? `<button class="btn sm" id="retry" style="margin-left:auto">Start again</button>` : ""}</div>`;
+  p.innerHTML = head + `<div class="quiz">${l.quiz.map((q, i) => {
+    const a = quizAns[i]; const kind = {mc:"Multiple choice", calc:"Calculation", short:"Short answer"}[q.type];
+    let body = "";
+    if (q.type === "mc") body = `<div class="opts">${q.options.map((o, j) => `<button class="opt ${a ? (j === q.answer ? "right" : a.pick === j ? "wrong" : "") : ""}" data-q="${i}" data-pick="${j}" ${a ? "disabled" : ""}>${String.fromCharCode(65 + j)}. ${h(o)}</button>`).join("")}</div>`;
+    if (q.type === "calc") body = `<form class="calc" data-calc="${i}"><input id="calc-${i}" inputmode="decimal" placeholder="Your answer" aria-label="Your answer" ${a ? `value="${h(a.val)}" disabled` : ""}>${q.unit ? `<span>${h(q.unit)}</span>` : ""}${a ? "" : `<button class="btn sm">Check</button>`}</form>`;
+    if (q.type === "short") body = a ? "" : `<div class="short"><textarea id="short-${i}" placeholder="Write your answer, then compare" aria-label="Your answer"></textarea>${quizAns["s" + i] ? `<div class="fb"><span class="v">Model answer</span><div>${h(q.answer)}</div></div><div class="rate"><button class="btn good" data-self="${i}" data-ok="1">I got it</button><button class="btn again" data-self="${i}" data-ok="0">I missed it</button></div>` : `<button class="btn sm" data-show="${i}">Compare with model answer</button>`}</div>`;
+    const fb = a ? `<div class="fb"><span class="v ${a.ok ? "ok" : "no"}">${a.ok ? "Correct." : "Not quite."}</span> ${q.type === "calc" && !a.ok ? `The answer is ${h(q.answer)}${q.unit ? " " + h(q.unit) : ""}. ` : ""}${q.type === "short" ? `<div>${h(q.answer)}</div>` : ""}${h(q.explain)} ${pg(q.page)}</div>` : "";
+    return `<article class="q"><div class="qh"><b>${i + 1} · ${kind}</b>${a ? "" : ""}</div><p class="qt">${h(q.q)}</p>${body}${fb}</article>`;
+  }).join("")}</div>`;
+}
+function answer(l, i, ok, extra){
+  quizAns[i] = {ok, ...extra};
+  const done = l.quiz.every((_, k) => quizAns[k]);
+  if (done){
+    const pct = Math.round(Object.values(quizAns).filter(a => a.ok).length / l.quiz.length * 100);
+    const rec = store.get("quiz:" + l.id, null);
+    store.set("quiz:" + l.id, rec ? {first:rec.first, best:Math.max(rec.best, pct), last:pct} : {first:pct, best:pct, last:pct});
+  }
+  renderPane(l);
+}
+
+/* Explain more + Ask: both answer only from the document, citing pages */
+const xp = {};            // key -> {state, text}
+const chats = {};         // lessonId -> [{role, content}]
+function cite(text){
+  return text.split(/\n{2,}/).map(par => "<p>" + h(par).replace(/\n/g, "<br>").replace(/\[p\.?\s*(\d+)\]/gi, (m, n) => `<button class="pg" data-page="${+n}">p.${+n}</button>`) + "</p>").join("");
+}
+function xpBlock(key){
+  if (!sampleFn) return "";
+  const x = xp[state.lessonId + ":" + key];
+  if (!x) return `<button class="xp" data-xp="${h(key)}">Explain more</button>`;
+  return `<div class="xbox" aria-live="polite">${x.text ? cite(x.text) : `<p class="empty">${x.err ? h(x.err) : "Thinking…"}</p>`}</div>`;
+}
+function docText(l, around){
+  return fitPages(around ? l.pages.filter(p => Math.abs(p.n - around) <= 1) : l.pages, 180000);
+}
+function itemFor(l, key){
+  const k = key[0], rest = key.slice(1);
+  if (k === "s"){ const s = l.summary[+rest]; return s && {what:s.text, page:s.page}; }
+  if (k === "t"){ const t = l.timeline[+rest]; return t && {what:`${t.date}: ${t.event}. ${t.why}`, page:t.page}; }
+  if (k === "m"){ const n = l.map.nodes.find(n => n.id === rest); return n && {what:`${n.label}: ${n.note}`, page:n.page}; }
+}
+async function explain(l, key){
+  const it = itemFor(l, key); if (!it || !sampleFn) return;
+  const x = xp[l.id + ":" + key] = {text:""}; renderPane(l);
+  const prompt = `You are a patient tutor. Using only the document text below, explain this point from the lesson "${l.title}" to a learner:\n\n"${it.what}"\n\nWrite three short paragraphs: 1) what it means in plain words, 2) a concrete example or analogy, 3) why it matters or a common mistake. Cite pages like [p.3]. No headings, no lists, under 170 words.\n\n${docText(l, it.page)}`;
+  try{
+    await sampleFn(prompt, {onText:({text}) => { x.text = text; if (state.lessonId === l.id) refreshXp(l); }});
+  }catch(e){ x.text = e.text || ""; x.err = errCopy(e.code); }
+  if (state.lessonId === l.id) renderPane(l);
+}
+let xpTimer = 0;
+function refreshXp(l){ if (xpTimer) return; xpTimer = requestAnimationFrame(() => { xpTimer = 0; renderPane(l); }); }
+const SUGG = l => [`What is the main argument of “${l.title}”?`, "Explain the hardest idea here like I'm new to it", "What are the most common mistakes people make with this?", "Give me a real-world example of the key idea"];
+function renderAsk(l, p){
+  const turns = chats[l.id] || [], prev = $("#askBox") ? $("#askBox").value : "";
+  if (!sampleFn){ p.innerHTML = `<p class="empty">Asking questions needs Claude, which isn't available in this view. Everything else in this lesson works offline.</p>`; return; }
+  p.innerHTML = `<div class="chat" id="chat">
+    ${turns.length ? "" : `<p class="empty">Ask anything about this document. Answers come only from its pages and cite them, so you can check.</p><div class="sugg">${SUGG(l).map(q => `<button data-sugg="${h(q)}">${h(q)}</button>`).join("")}</div>`}
+    ${turns.map(t => `<div class="msg ${t.role === "user" ? "u" : "a"}">${t.role === "user" ? h(t.content) : cite(t.content || "Thinking…")}</div>`).join("")}
+    <form class="ask" id="askForm"><textarea id="askBox" placeholder="Ask about this document" aria-label="Your question"></textarea><button class="btn primary" ${askBusy ? "disabled" : ""}>Ask</button></form>
+  </div>`;
+  if (prev) $("#askBox").value = prev;
+}
+let askBusy = false;
+async function ask(l, q){
+  if (askBusy || !q.trim() || !sampleFn) return;
+  const turns = chats[l.id] = chats[l.id] || [];
+  turns.push({role:"user", content:q.trim()}); const ans = {role:"assistant", content:""}; turns.push(ans);
+  askBusy = true; const box = $("#askBox"); if (box) box.value = ""; renderPane(l);
+  const rules = `You answer questions about the document "${l.title}" for a learner. Use only the document text below. If the answer is not in it, say so and suggest what to look up. Cite pages like [p.4] after each claim. Be clear and concrete, use a short example when it helps, and keep answers under 200 words. Plain paragraphs, no headings.\n\n${docText(l)}`;
+  const hist = turns.slice(0, -1).slice(-8);
+  try{
+    const r = await sampleFn([{role:"user", content:rules}, ...hist], {cache:false, onText:({text}) => { ans.content = text; if (state.tab === "ask" && state.lessonId === l.id) refreshXp(l); }});
+    ans.content = r.text;
+  }catch(e){ ans.content = (e.text ? e.text + "\n\n" : "") + errCopy(e.code); }
+  askBusy = false; if (state.tab === "ask" && state.lessonId === l.id){ renderPane(l); const c = $("#askBox"); if (c) c.focus(); }
+}
+
+/* Source page */
+function renderSource(l){
+  const el = $("#source"); if (!el) return;
+  const pn = state.page, txt = pageText(l, pn);
+  let html = h(txt);
+  const re = quoteRegex(state.quote);
+  if (re){ const m = norm(txt).match(re); if (m){ const at = m.index; html = h(txt.slice(0, at)) + "<mark>" + h(m[0]) + "</mark>" + h(txt.slice(at + m[0].length)); } }
+  const paras = html.split(/\n{2,}/).map(x => `<p>${x.replace(/\n/g, "<br>")}</p>`).join("");
+  const nav = l.pages.length <= 40 ? l.pages.map(p => `<button class="pg ${p.n === pn ? "on" : ""}" data-page="${p.n}" data-nav="1">${p.n}</button>`).join("") : `<button class="pg" data-page="${Math.max(1, pn - 1)}" data-nav="1">← prev</button><button class="pg" data-page="${Math.min(l.pages.length, pn + 1)}" data-nav="1">next →</button>`;
+  el.innerHTML = `<div class="sh"><h2>Original · page ${pn} of ${l.pages.length}</h2><button class="btn sm x" id="closeSrc">Close</button></div>
+    <div class="pnav">${nav}</div>
+    <div class="body" id="srcBody"><span class="pnum">${h(l.file)}</span>${txt ? paras : `<p class="empty">No readable text on this page.</p>`}</div>`;
+  const mk = el.querySelector("mark"), sb = el.querySelector("#srcBody"); if (mk && sb) sb.scrollTop = Math.max(0, mk.offsetTop - sb.clientHeight / 3);
+}
+
+/* ---------- Render + events ---------- */
+function render(){ if (state.view === "lesson") renderLesson(); else renderLibrary(); }
+function renderJobOnly(){ const s = document.querySelector(".progress .stream"); if (s && state.job) s.textContent = state.job.stream.slice(-300); else if (state.view === "library") render(); }
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, [data-del], [data-node], #flash"); if (!t) return;
+  const l = byId(state.lessonId);
+  if (t.dataset.del){ e.stopPropagation(); userLessons = userLessons.filter(x => x.id !== t.dataset.del); store.set("lessons", userLessons); return render(); }
+  if (t.dataset.open) return openLesson(t.dataset.open);
+  if (t.id === "home" || t.id === "toLib"){ state.view = "library"; return render(); }
+  if (t.id === "pick") return $("#file").click();
+  if (t.id === "stop"){ ctl && ctl.abort(); return; }
+  if (t.id === "dismiss"){ state.job = null; return render(); }
+  if (!l) return;
+  if (t.dataset.tab){ state.tab = t.dataset.tab; return renderLesson(); }
+  if (t.dataset.page){
+    state.page = +t.dataset.page; if (!t.dataset.nav) state.quote = t.dataset.quote || null; else state.quote = null;
+    renderSource(l); $("#source").classList.add("open"); return;
+  }
+  if (t.id === "closeSrc"){ $("#source").classList.remove("open"); return; }
+  if (t.dataset.node){ state.mapSel = t.dataset.node; renderPane(l); return; }
+  if (t.dataset.xp) return explain(l, t.dataset.xp);
+  if (t.dataset.sugg) return ask(l, t.dataset.sugg);
+  if (t.id === "flip" || t.id === "flash"){ fc.flipped = !fc.flipped; return renderPane(l); }
+  if (t.dataset.rate) return rate(l, +t.dataset.rate);
+  if (t.id === "studyAll"){ fc.queue = l.flashcards.map((_, i) => i); return renderPane(l); }
+  if (t.dataset.pick){ const i = +t.dataset.q, q = l.quiz[i]; return answer(l, i, +t.dataset.pick === q.answer, {pick:+t.dataset.pick}); }
+  if (t.dataset.show){ quizAns["s" + t.dataset.show] = true; const v = $("#short-" + t.dataset.show).value; renderPane(l); const ta = $("#short-" + t.dataset.show); if (ta) ta.value = v; return; }
+  if (t.dataset.self){ const i = +t.dataset.self; delete quizAns["s" + i]; return answer(l, i, t.dataset.ok === "1", {}); }
+  if (t.id === "retry"){ quizAns = {}; return renderPane(l); }
+});
+document.addEventListener("keydown", e => {
+  if (e.target.id === "askBox" && e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("#askForm").requestSubmit(); return; }
+  const n = e.target.closest && e.target.closest("[data-node], [data-del]");
+  if (n && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); n.click(); }
+});
+document.addEventListener("submit", e => {
+  if (e.target.id === "askForm"){ e.preventDefault(); const l = byId(state.lessonId); return ask(l, $("#askBox").value); }
+  const f = e.target.closest("[data-calc]"); if (!f) return; e.preventDefault();
+  const l = byId(state.lessonId), i = +f.dataset.calc, q = l.quiz[i];
+  const raw = f.querySelector("input").value.trim().replace(/[\s$€£%]/g, "").replace(/×10\^?/g, "e").replace(/^(-?[\d.,]+)k$/i, "$1e3");
+  const cands = [];
+  if (/^-?\d{1,3}(,\d{3})+(\.\d+)?(e-?\d+)?$/.test(raw)) cands.push(raw.replace(/,/g, ""));
+  if (/^-?\d{1,3}(\.\d{3})+(,\d+)?(e-?\d+)?$/.test(raw)) cands.push(raw.replace(/\./g, "").replace(",", "."));
+  cands.push(raw.replace(",", "."));
+  const vals = cands.map(parseFloat).filter(isFinite); if (!vals.length) return;
+  answer(l, i, vals.some(v => Math.abs(v - q.answer) <= q.tolerance + 1e-9), {val:f.querySelector("input").value});
+});
+$("#file").addEventListener("change", e => { const f = e.target.files[0]; e.target.value = ""; if (f) makeLesson(f); });
+["dragover","dragenter"].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); const d = $("#drop"); if (d) d.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); const d = $("#drop"); if (d && (ev === "drop" || !e.relatedTarget)) d.classList.remove("over"); }));
+document.addEventListener("drop", e => { if (HOSTED) return; const f = e.dataTransfer && e.dataTransfer.files[0]; if (f){ if (state.view !== "library"){ state.view = "library"; render(); } makeLesson(f); } });
+function net(){ const on = navigator.onLine; $("#net").classList.toggle("off", !on); $("#netTxt").textContent = on ? "Online" : "Offline · saved lessons still work"; }
+addEventListener("online", net); addEventListener("offline", net); net();
+render();
+</script>
+
+</body>
+</html>

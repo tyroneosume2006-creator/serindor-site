@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Serindor</title>
-<meta name="description" content="Serindor — the home of Cryptic Seconds and future projects.">
+<meta name="description" content="Serindor — the home of Cryptic Seconds, Serinote and future projects.">
 <meta name="theme-color" content="#0E1014">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 58 12v18c0 16-11 26-26 31C17 56 6 46 6 30V12Z' fill='%231F3A5F' stroke='%233D7BD9' stroke-width='3'/%3E%3Cpath d='M32 14v34M20 26h24' stroke='%23E6E8EC' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,6 +89,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 
   .plate .seal svg { width: 72px; height: 72px; }
   .plate .body { padding: 22px 20px 24px; }
 }
+.plate + .plate { margin-top: 20px; }
 .more { margin: 20px 0 0; color: var(--burnished); font-size: 15px; }
 
 /* contact */
@@ -125,7 +126,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
     <div class="text">
       <h1>Serindor</h1>
       <p class="tag">Small things, carefully made.</p>
-      <p class="lede">An independent maker of games and tools. The first is Cryptic Seconds, a daily cryptic clue for Discord.</p>
+      <p class="lede">An independent maker of games and tools: Cryptic Seconds, a daily cryptic clue for Discord, and Serinote, which turns any reading into a lesson you can see.</p>
       <div class="actions">
         <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add Cryptic Seconds to Discord</a>
         <a class="btn btn-quiet" href="#contact">Contact</a>
@@ -180,6 +181,26 @@ footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wr
           <a href="/crypticseconds/terms/">Terms of Service</a>
           <a href="/crypticseconds/privacy/">Privacy Policy</a>
           <a href="mailto:support@serindor.com">Support</a>
+        </div>
+      </div>
+    </article>
+    <article class="plate">
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 140 140">
+          <rect x="22" y="18" width="70" height="98" rx="6" fill="none" stroke="#9EC0EE" stroke-width="6"/>
+          <path d="M40 46h34M40 62h34M40 78h22" stroke="#3A414A" stroke-width="6" stroke-linecap="round"/>
+          <path d="M92 46 112 40M92 78 116 92" stroke="#E6E8EC" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="114" cy="40" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
+          <circle cx="116" cy="94" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3>Serinote</h3>
+        <p class="kind">A study tool, in early preview</p>
+        <p class="desc">Turn any reading into a lesson you can see: a summary, a concept map, the key formulas, flashcards and a quiz, with every point linked back to the page it came from.</p>
+        <div class="links">
+          <a class="btn btn-primary" href="/serinote/">Open Serinote</a>
+          <a href="mailto:hello@serindor.com?subject=Serinote">Feedback</a>
         </div>
       </div>
     </article>
