@@ -44,13 +44,13 @@ a:hover { color: var(--text); }
   color: var(--text);
   text-decoration: none;
 }
-.site-header nav a { font-size: 15px; color: var(--muted); text-decoration: none; margin-left: 18px; }
+.site-header nav a { font-size: 15px; color: var(--muted); text-decoration: none; margin-left: 18px; padding-block: 10px; }
 .site-header nav a:hover { color: var(--gold); }
 
 /* Landing */
-.hero { padding: 110px 0 80px; text-align: center; }
+.hero { padding: 110px 0 80px; }
 .hero .mark {
-  width: 46px; height: 46px; margin: 0 auto 34px;
+  width: 46px; height: 46px; margin: 0 0 34px 10px;
   border: 1px solid var(--gold); transform: rotate(45deg);
   position: relative;
 }
@@ -61,11 +61,8 @@ a:hover { color: var(--text); }
   font-family: var(--display);
   font-weight: 400;
   font-size: clamp(44px, 9vw, 78px);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
   margin: 0 0 18px;
-  color: var(--gold);
-  padding-left: 0.22em; /* balance letter-spacing */
+  color: var(--text);
 }
 .hero p { color: var(--muted); font-style: italic; margin: 0; font-size: 19px; }
 
@@ -103,7 +100,7 @@ a:hover { color: var(--text); }
 
 /* Legal pages */
 .doc { padding-top: 64px; padding-bottom: 90px; }
-.doc .eyebrow { color: var(--gold-soft); text-transform: uppercase; letter-spacing: 0.2em; font-size: 13px; margin: 0 0 10px; }
+.doc .eyebrow { color: var(--gold-soft); font-size: 15px; margin: 0 0 8px; }
 .doc h1 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 7vw, 52px); line-height: 1.1; margin: 0 0 10px; color: var(--gold); }
 .doc .updated { color: var(--muted); font-size: 15px; margin: 0 0 40px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
 .doc h2 { font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--text); margin: 44px 0 10px; }

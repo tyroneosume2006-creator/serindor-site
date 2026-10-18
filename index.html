@@ -9,12 +9,16 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 58 12v18c0 16-11 26-26 31C17 56 6 46 6 30V12Z' fill='%231F3A5F' stroke='%233D7BD9' stroke-width='3'/%3E%3Cpath d='M32 14v34M20 26h24' stroke='%23E6E8EC' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&family=Figtree:wght@400;600&display=swap">
 <style>
-/* Serindor: sable ground, forged-steel plates, azure heraldry. One committed dark look. */
+/*
+  Serindor. Sable ground, forged-steel plates, azure heraldry.
+  One bold thing: the hanging azure banner with the crest. Everything else stays quiet and left-aligned.
+  Type: IM Fell English SC for display (old-print, carved), Figtree for reading.
+*/
 :root {
   --sable: #0E1014;
-  --sable-2: #13161B;
+  --sable-2: #14171C;
   --steel: #2A2F36;
   --edge: #3A414A;
   --burnished: #8A929C;
@@ -25,121 +29,86 @@
   --display: "IM Fell English SC", "Palatino Linotype", Palatino, Georgia, serif;
   --italic: "IM Fell English", "Palatino Linotype", Georgia, serif;
   --body: "Figtree", "Segoe UI", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { background: var(--sable); scroll-behavior: smooth; }
-body {
-  margin: 0; background: var(--sable); color: var(--argent);
-  font-family: var(--body); font-size: 17px; line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before { animation: none !important; transition: none !important; } }
-a { color: var(--azure-pale); text-underline-offset: 3px; }
+html { background: var(--sable); }
+body { margin: 0; background: var(--sable); color: var(--argent); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: var(--azure-pale); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 a:hover { color: var(--argent); }
 :focus-visible { outline: 2px solid var(--azure); outline-offset: 3px; }
 
-.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
-.label { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--azure-pale); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
 
-/* ---------- header ---------- */
-header.bar { position: sticky; top: 0; z-index: 10; background: rgba(14,16,20,.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--edge); }
-header.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--argent); text-decoration: none; font-family: var(--display); font-size: 22px; letter-spacing: .04em; }
-.brand svg { width: 26px; height: 30px; flex: none; }
-nav { display: flex; gap: 22px; }
-nav a { color: var(--burnished); text-decoration: none; font-size: 15px; }
+/* header */
+.bar { border-bottom: 1px solid var(--edge); }
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--argent); text-decoration: none; font-family: var(--display); font-size: 22px; }
+.brand svg { width: 22px; height: 26px; flex: none; }
+nav { display: flex; gap: 24px; }
+nav a { color: var(--burnished); text-decoration: none; font-size: 15px; padding-block: 8px; }
 nav a:hover { color: var(--argent); }
 
-/* ---------- hero ---------- */
-.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--edge);
-  background:
-    radial-gradient(ellipse 60% 70% at 78% 40%, rgba(61,123,217,.16), transparent 70%),
-    linear-gradient(180deg, var(--sable) 0%, var(--sable-2) 100%); }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 88px 96px; }
-.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 12vw, 132px); line-height: .9; letter-spacing: .02em; margin: 14px 0 22px; }
-.hero h1 .initial { color: var(--azure); }
-.hero p.tag { font-family: var(--italic); font-style: italic; font-size: clamp(22px, 3.4vw, 30px); color: var(--argent); margin: 0 0 30px; max-width: 26ch; }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 3px; font-weight: 600; font-size: 15px; text-decoration: none; transition: background .15s, border-color .15s, color .15s; }
-.btn-azure { background: var(--azure); color: #fff; }
-.btn-azure:hover { background: #4E8BE6; color: #fff; }
-.btn-steel { border: 1px solid var(--edge); color: var(--argent); background: var(--steel); }
-.btn-steel:hover { border-color: var(--azure); color: var(--argent); }
+/* hero: text on the left, a banner hanging from the header rule on the right */
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: start; }
+.hero .text { padding-block: 96px 88px; }
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 11vw, 124px); line-height: .92; margin: 0 0 20px; }
+.hero .tag { font-family: var(--italic); font-style: italic; font-size: clamp(22px, 3vw, 28px); margin: 0 0 32px; color: var(--argent); }
+.hero .lede { margin: 0 0 32px; max-width: 46ch; color: var(--burnished); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 20px; border-radius: 2px; font-weight: 600; font-size: 15px; text-decoration: none; }
+.btn-primary { background: var(--azure); color: #fff; }
+.btn-primary:hover { background: #4C88E0; color: #fff; }
+.btn-quiet { border: 1px solid var(--edge); color: var(--argent); }
+.btn-quiet:hover { border-color: var(--azure-pale); color: var(--argent); }
 
-.crest { justify-self: center; width: min(100%, 340px); }
-.crest svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
-@media (max-width: 760px) {
-  .hero .wrap { grid-template-columns: 1fr; padding-block: 56px 64px; gap: 28px; }
-  .crest { order: -1; width: 170px; justify-self: start; }
+.banner { margin-top: -1px; justify-self: center; width: 100%; }
+.banner svg { display: block; width: 100%; height: auto; }
+@media (max-width: 800px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 0; }
+  .banner { order: -1; width: 150px; justify-self: start; }
+  .hero .text { padding-block: 32px 64px; }
 }
 
-/* steel band with a chevron pattern, like a blazoned border */
-.band { height: 14px; border-bottom: 1px solid var(--edge);
-  background: repeating-linear-gradient(135deg, var(--azure-deep) 0 10px, var(--steel) 10px 20px); opacity: .9; }
+/* sections */
+section { padding-block: 72px; border-top: 1px solid var(--edge); }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; margin: 0 0 28px; }
 
-/* ---------- sections ---------- */
-section { padding-block: 84px; }
-.head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 30px; }
-h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 5.5vw, 52px); margin: 6px 0 0; line-height: 1; letter-spacing: .02em; }
-.head p { margin: 0; color: var(--burnished); max-width: 42ch; }
-
-/* project card, styled like a steel plate with an azure banner edge */
-.project { display: grid; grid-template-columns: 220px minmax(0, 1fr); background: var(--steel); border: 1px solid var(--edge); border-radius: 4px; overflow: hidden; }
-.project .art { background: var(--azure-deep); display: grid; place-items: center; padding: 28px; border-right: 1px solid var(--edge); position: relative; }
-.project .art::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 9px); pointer-events: none; }
-.project .art svg { width: 140px; height: 140px; position: relative; z-index: 1; }
-.project .body { padding: 30px 32px; display: grid; gap: 14px; align-content: start; min-width: 0; }
-.project h3 { font-family: var(--display); font-weight: 400; font-size: 34px; margin: 0; line-height: 1.1; }
-.project h3 em { font-family: var(--italic); color: var(--azure-pale); }
-.project .meta { display: flex; gap: 10px; flex-wrap: wrap; }
-.chip { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--edge); border-radius: 2px; color: var(--burnished); }
-.chip.live { border-color: var(--azure); color: var(--azure-pale); }
-.project p { margin: 0; max-width: 58ch; }
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge); margin-top: 4px; }
-.facts div { padding: 12px 0; display: grid; gap: 2px; }
-.facts div + div { border-left: 1px solid var(--edge); padding-left: 16px; }
-.facts b { font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--argent); line-height: 1; }
-.facts span { font-size: 13px; color: var(--burnished); }
-.links { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; font-size: 15px; }
-@media (max-width: 760px) {
-  .project { grid-template-columns: 1fr; }
-  .project .art { border-right: 0; border-bottom: 1px solid var(--edge); padding: 22px; }
-  .project .art svg { width: 96px; height: 96px; }
-  .project .body { padding: 24px 20px; }
+/* the project: a forged-steel plate, the only boxed element on the page */
+.plate { display: grid; grid-template-columns: 180px minmax(0, 1fr); background: var(--steel); border: 1px solid var(--edge); border-radius: 3px; }
+.plate .seal { display: grid; place-items: center; padding: 28px; border-right: 1px solid var(--edge); background: var(--azure-deep); border-radius: 3px 0 0 3px; }
+.plate .seal svg { width: 112px; height: 112px; }
+.plate .body { padding: 28px 32px 30px; min-width: 0; }
+.plate h3 { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; margin: 0 0 4px; }
+.plate .kind { margin: 0 0 16px; color: var(--azure-pale); font-size: 15px; }
+.plate p.desc { margin: 0 0 24px; max-width: 56ch; }
+.plate .links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; font-size: 15px; }
+@media (max-width: 680px) {
+  .plate { grid-template-columns: 1fr; }
+  .plate .seal { border-right: 0; border-bottom: 1px solid var(--edge); border-radius: 3px 3px 0 0; padding: 20px; justify-items: start; }
+  .plate .seal svg { width: 72px; height: 72px; }
+  .plate .body { padding: 22px 20px 24px; }
 }
-
-.forge { margin-top: 18px; border: 1px dashed var(--edge); border-radius: 4px; padding: 20px 24px; display: flex; gap: 14px; align-items: center; color: var(--burnished); }
-.forge svg { width: 22px; height: 22px; flex: none; color: var(--azure); }
+.more { margin: 20px 0 0; color: var(--burnished); font-size: 15px; }
 
 /* contact */
-.contact { background: var(--sable-2); border-top: 1px solid var(--edge); }
-.contact .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.mail { background: var(--steel); border: 1px solid var(--edge); border-radius: 4px; padding: 22px 24px; display: grid; gap: 6px; min-width: 0; }
-.mail .addr { font-family: var(--mono); font-size: 17px; color: var(--argent); overflow-wrap: anywhere; user-select: all; }
-.mail .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.copy { background: transparent; border: 1px solid var(--edge); color: var(--burnished); font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 3px; cursor: pointer; }
-.copy:hover { border-color: var(--azure); color: var(--argent); }
-@media (max-width: 760px) { .contact .grid { grid-template-columns: 1fr; } }
+.contact p.intro { margin: 0 0 18px; }
+.addr-list { display: grid; gap: 0; max-width: 560px; border-top: 1px solid var(--edge); }
+.addr { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 0; border-bottom: 1px solid var(--edge); }
+.addr span { color: var(--burnished); font-size: 15px; }
+.addr a { font-size: 18px; color: var(--argent); overflow-wrap: anywhere; }
+.copy { background: none; border: 1px solid var(--edge); color: var(--burnished); font: inherit; font-size: 14px; min-height: 36px; padding: 4px 14px; border-radius: 2px; cursor: pointer; }
+.copy:hover { border-color: var(--azure-pale); color: var(--argent); }
 
 footer { border-top: 1px solid var(--edge); }
-footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 26px max(26px, env(safe-area-inset-bottom)); color: var(--burnished); font-size: 14px; }
-footer .motto { font-family: var(--italic); font-style: italic; }
-
-/* gentle entrance for the hero only */
-@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.hero .text > * { animation: rise .7s ease-out both; }
-.hero .text > *:nth-child(2) { animation-delay: .08s; }
-.hero .text > *:nth-child(3) { animation-delay: .16s; }
-.hero .text > *:nth-child(4) { animation-delay: .24s; }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 24px max(24px, env(safe-area-inset-bottom)); color: var(--burnished); font-size: 14px; }
 </style>
 </head>
 <body>
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="/" aria-label="Serindor home">
+    <a class="brand" href="/">
       <svg viewBox="0 0 52 60" aria-hidden="true"><path d="M26 2 50 10v16c0 16-10 26-24 32C12 52 2 42 2 26V10Z" fill="#1F3A5F" stroke="#3D7BD9" stroke-width="2.5"/><path d="M26 13v32M16 23h20" stroke="#E6E8EC" stroke-width="3.5" stroke-linecap="round"/></svg>
       Serindor
     </a>
@@ -153,115 +122,90 @@ footer .motto { font-family: var(--italic); font-style: italic; }
 <div class="hero">
   <div class="wrap">
     <div class="text">
-      <span class="label">Est. 2026</span>
-      <h1><span class="initial">S</span>erindor</h1>
+      <h1>Serindor</h1>
       <p class="tag">Small things, carefully made.</p>
-      <div class="cta">
-        <a class="btn btn-azure" href="#projects">See the projects</a>
-        <a class="btn btn-steel" href="#contact">Get in touch</a>
+      <p class="lede">An independent maker of games and tools. The first is Cryptic Seconds, a daily cryptic clue for Discord.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add Cryptic Seconds to Discord</a>
+        <a class="btn btn-quiet" href="#contact">Contact</a>
       </div>
     </div>
-    <div class="crest" aria-hidden="true">
-      <!-- Original heraldic shield: azure field, steel bordure, argent sword over a chevron of seconds -->
-      <svg viewBox="0 0 300 360">
+
+    <div class="banner" aria-hidden="true">
+      <!-- An azure banner hanging from the header rule, swallow-tailed, bearing the Serindor crest. Original artwork. -->
+      <svg viewBox="0 0 300 470">
         <defs>
-          <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#29507F"/><stop offset="1" stop-color="#16294A"/></linearGradient>
-          <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A929C"/><stop offset=".45" stop-color="#3A414A"/><stop offset="1" stop-color="#6E757C"/></linearGradient>
+          <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#18304F"/><stop offset=".5" stop-color="#22426C"/><stop offset="1" stop-color="#18304F"/>
+          </linearGradient>
+          <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#AEB5BE"/><stop offset=".5" stop-color="#4A525C"/><stop offset="1" stop-color="#8A929C"/>
+          </linearGradient>
         </defs>
-        <path d="M150 8 290 52v96c0 98-60 160-140 204C70 308 10 246 10 148V52Z" fill="url(#steel)"/>
-        <path d="M150 26 272 64v84c0 86-52 142-122 182C80 290 28 234 28 148V64Z" fill="url(#field)"/>
-        <path d="M44 214 150 128l106 86v30L150 158 44 244Z" fill="#2A2F36" opacity=".9"/>
-        <g fill="#9EC0EE" opacity=".55">
-          <circle cx="78" cy="96" r="3"/><circle cx="104" cy="88" r="3"/><circle cx="196" cy="88" r="3"/><circle cx="222" cy="96" r="3"/>
-          <circle cx="66" cy="122" r="3"/><circle cx="234" cy="122" r="3"/>
+        <rect x="18" y="0" width="264" height="10" fill="#3A414A"/>
+        <path d="M30 10h240v420l-120-56-120 56Z" fill="url(#cloth)"/>
+        <path d="M44 10v396M256 10v396" stroke="#3D7BD9" stroke-width="2" opacity=".55"/>
+        <g transform="translate(70 70)">
+          <path d="M80 0 160 26v58c0 58-36 94-80 118C36 178 0 142 0 84V26Z" fill="url(#metal)"/>
+          <path d="M80 12 148 34v50c0 50-31 81-68 102C43 165 12 134 12 84V34Z" fill="#1F3A5F"/>
+          <path d="M80 30v134" stroke="#E6E8EC" stroke-width="7" stroke-linecap="round"/>
+          <path d="M80 26 74 40h12Z" fill="#E6E8EC"/>
+          <rect x="54" y="136" width="52" height="7" rx="3.5" fill="#E6E8EC"/>
+          <circle cx="80" cy="178" r="7" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="2.5"/>
         </g>
-        <g>
-          <path d="M150 60v196" stroke="#E6E8EC" stroke-width="10" stroke-linecap="round"/>
-          <path d="M150 60 142 76h16Z" fill="#E6E8EC"/>
-          <rect x="112" y="226" width="76" height="10" rx="5" fill="#E6E8EC"/>
-          <path d="M150 236v40" stroke="#8A929C" stroke-width="12" stroke-linecap="round"/>
-          <circle cx="150" cy="288" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
-        </g>
+        <text x="150" y="350" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="30" fill="#E6E8EC" letter-spacing="2">Serindor</text>
       </svg>
     </div>
   </div>
 </div>
-<div class="band" aria-hidden="true"></div>
 
 <section id="projects">
   <div class="wrap">
-    <div class="head">
-      <div><span class="label">Projects</span><h2>From the forge</h2></div>
-      <p>Small, independent projects, built with care for the details.</p>
-    </div>
-
-    <article class="project">
-      <div class="art" aria-hidden="true">
+    <h2>Projects</h2>
+    <article class="plate">
+      <div class="seal" aria-hidden="true">
         <svg viewBox="0 0 140 140">
           <circle cx="70" cy="70" r="58" fill="none" stroke="#3A414A" stroke-width="8"/>
           <path d="M70 12a58 58 0 1 1-55.2 75.9" fill="none" stroke="#3D7BD9" stroke-width="8" stroke-linecap="round"/>
-          <g stroke="#9EC0EE" stroke-width="2.5" stroke-linecap="round">
-            <path d="M70 22v8M70 110v8M22 70h8M110 70h8"/>
-          </g>
-          <text x="70" y="82" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="38" fill="#E6E8EC">Cs</text>
+          <text x="70" y="82" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="40" fill="#E6E8EC">Cs</text>
         </svg>
       </div>
       <div class="body">
-        <div class="meta"><span class="chip live">Live</span><span class="chip">Discord game</span></div>
-        <h3>Cryptic <em>Seconds</em></h3>
-        <p>A daily cryptic clue, played right inside your Discord server. One clue a day, a streak to protect, and a leaderboard to settle the argument.</p>
-        <div class="facts">
-          <div><b>1</b><span>clue a day</span></div>
-          <div><b>60s</b><span>on the clock</span></div>
-          <div><b>0</b><span>cost to play</span></div>
-        </div>
+        <h3>Cryptic Seconds</h3>
+        <p class="kind">A Discord game, live now and free to play</p>
+        <p class="desc">A daily cryptic clue, played right inside your Discord server. One clue a day, a streak to protect, and a leaderboard to settle the argument.</p>
         <div class="links">
-          <a class="btn btn-azure" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add to Discord</a>
+          <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add to Discord</a>
           <a href="/crypticseconds/terms/">Terms of Service</a>
           <a href="/crypticseconds/privacy/">Privacy Policy</a>
           <a href="mailto:support@serindor.com">Support</a>
         </div>
       </div>
     </article>
-
-    <div class="forge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20h16M6 20l1.5-6h9L18 20M9 14V9a3 3 0 0 1 6 0v5M12 3v2"/></svg>
-      <span>More projects are on the anvil. Check back soon.</span>
-    </div>
+    <p class="more">More projects are on the anvil.</p>
   </div>
 </section>
 
 <section class="contact" id="contact">
   <div class="wrap">
-    <div class="head">
-      <div><span class="label">Contact</span><h2>Send word</h2></div>
-      <p>For anything at all.</p>
-    </div>
-    <div class="grid">
-      <div class="mail">
-        <span class="label">General</span>
-        <div class="row"><span class="addr" id="m1">hello@serindor.com</span><button class="copy" type="button" data-copy="m1">Copy</button></div>
-      </div>
-      <div class="mail">
-        <span class="label">Support for Cryptic Seconds</span>
-        <div class="row"><span class="addr" id="m2">support@serindor.com</span><button class="copy" type="button" data-copy="m2">Copy</button></div>
-      </div>
+    <h2>Contact</h2>
+    <p class="intro">For anything at all:</p>
+    <div class="addr-list">
+      <div class="addr"><span>General</span><a id="m1" href="mailto:hello@serindor.com">hello@serindor.com</a><button class="copy" type="button" data-copy="m1">Copy</button></div>
+      <div class="addr"><span>Cryptic Seconds support</span><a id="m2" href="mailto:support@serindor.com">support@serindor.com</a><button class="copy" type="button" data-copy="m2">Copy</button></div>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">
-    <span>© 2026 Serindor</span>
-    <span class="motto">Small things, carefully made.</span>
-  </div>
+  <div class="wrap"><span>© 2026 Serindor</span><span>Small things, carefully made.</span></div>
 </footer>
 
 <script>
 document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
-  const el = document.getElementById(btn.dataset.copy);
-  try { await navigator.clipboard.writeText(el.textContent); btn.textContent = "Copied"; }
-  catch { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; }
+  const text = document.getElementById(btn.dataset.copy).textContent;
+  try { await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
+  catch { btn.textContent = "Press Ctrl+C"; const r = document.createRange(); r.selectNodeContents(document.getElementById(btn.dataset.copy)); getSelection().removeAllRanges(); getSelection().addRange(r); }
   setTimeout(() => (btn.textContent = "Copy"), 1600);
 }));
 </script>
