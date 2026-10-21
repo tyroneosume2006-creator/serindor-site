@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0B0D11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Figtree:wght@400;500;600&display=swap">
 <script>
   // Motion is opt-out: anyone asking for reduced motion gets the plain, still page.
   (function () {
@@ -27,7 +27,7 @@
 <style>
 /*
   Serindor — sable ground, argent type, one azure accent.
-  Type-led: Cormorant Garamond for display, Figtree for reading.
+  Type-led: IM Fell English SC for display (old-print, carved), IM Fell English for italics, Figtree for reading.
   The signature is the motion: inertia scroll, masked type, stacking project plates.
 */
 :root {
@@ -42,7 +42,8 @@
   --azure: #3D7BD9;
   --azure-hi: #6A9BE6;
   --azure-pale: #A9C6F0;
-  --display: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+  --display: "IM Fell English SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --italic: "IM Fell English", "Palatino Linotype", Georgia, serif;
   --body: "Figtree", "Segoe UI", sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --gutter: max(20px, env(safe-area-inset-left));
@@ -66,6 +67,10 @@ body::after {
 }
 .motion body::after { animation: grain 1.2s steps(6) infinite; }
 @keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
+
+/* IM Fell comes in one weight: never fake-bold it, and set italics in IM Fell English */
+body { font-synthesis: none; }
+h1 em, h2 em, h3 em, .statement p em, .clue q, .intro .word em { font-family: var(--italic); }
 
 /* ---------- intro ---------- */
 .intro { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: var(--sable); }
@@ -194,7 +199,7 @@ html:not(.motion) .clue .tiles span { color: #fff; background: var(--azure); bor
 .clue .timer { position: relative; width: 44px; height: 44px; }
 .clue .timer svg { width: 44px; height: 44px; transform: rotate(-90deg); }
 .clue .timer span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--argent); }
-.clue q { display: block; quotes: none; font-family: var(--display); font-style: italic; font-size: 30px; line-height: 1.15; margin-bottom: 24px; }
+.clue q { display: block; quotes: none; font-family: var(--italic); font-style: italic; font-size: 30px; line-height: 1.15; margin-bottom: 24px; }
 .clue .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
 .clue .tiles span { aspect-ratio: 1; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--edge-2); font-weight: 600; font-size: 22px; color: transparent; transition: background-color .35s, border-color .35s, color .2s, transform .35s var(--ease); }
 .clue .tiles span.on { color: #fff; background: var(--azure); border-color: var(--azure); transform: translateY(-3px); }
@@ -225,7 +230,7 @@ html:not(.motion) .clue .tiles span { color: #fff; background: var(--azure); bor
 .addrs { border-top: 1px solid var(--edge); }
 .addr { display: grid; grid-template-columns: 240px minmax(0, 1fr) auto; align-items: center; gap: 8px 24px; padding: 28px 0; border-bottom: 1px solid var(--edge); }
 .addr span { color: var(--muted); font-size: 15px; }
-.addr a { font-family: var(--display); font-size: clamp(28px, 3.6vw, 48px); line-height: 1.1; text-decoration: none; overflow-wrap: anywhere; background: linear-gradient(var(--azure), var(--azure)) 0 100% / 0 2px no-repeat; transition: background-size .6s var(--ease); justify-self: start; }
+.addr a { font-family: var(--italic); font-size: clamp(24px, 3.6vw, 46px); line-height: 1.1; text-decoration: none; overflow-wrap: anywhere; background: linear-gradient(var(--azure), var(--azure)) 0 100% / 0 2px no-repeat; transition: background-size .6s var(--ease); justify-self: start; }
 .addr a:hover { background-size: 100% 2px; }
 .copy { background: none; border: 1px solid var(--edge-2); color: var(--muted); font: inherit; font-size: 14px; min-height: 40px; padding: 0 18px; border-radius: 999px; cursor: pointer; transition: border-color .3s, color .3s; }
 .copy:hover { border-color: var(--argent); color: var(--argent); }
