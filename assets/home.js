@@ -68,8 +68,7 @@
     const tl = gsap.timeline({ defaults: { ease } });
     tl.to(".hero h1 .line > span", { y: 0, duration: 1.5, stagger: 0.12 })
       .to(".hero .rv", { opacity: 1, y: 0, duration: 1.2, stagger: 0.08 }, "-=1.15")
-      .from(".bar .wrap", { y: -24, opacity: 0, duration: 1 }, "-=1.1")
-      .from(".hero .ghost", { opacity: 0, x: 80, duration: 2.2 }, 0);
+      .from(".bar .wrap", { y: -24, opacity: 0, duration: 1 }, "-=1.1");
   };
 
   if (root.classList.contains("no-intro")) {
@@ -89,19 +88,7 @@
   }
 
   /* ---------- hero parallax (the forge shader handles the light) ---------- */
-  gsap.to(".hero .ghost", { yPercent: 30, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
   gsap.to(".hero .wrap", { y: -60, opacity: 0.25, ease: "none", scrollTrigger: { trigger: ".hero", start: "40% top", end: "bottom top", scrub: true } });
-
-  /* ---------- marquee that leans into your scroll speed ---------- */
-  const track = $(".marquee .track");
-  let x = 0, boost = 0;
-  lenis.on("scroll", ({ velocity }) => { boost = Math.min(Math.abs(velocity) * 0.35, 9); });
-  gsap.ticker.add(() => {
-    const half = track.scrollWidth / 2;
-    x -= 0.55 + boost; boost *= 0.92;
-    if (-x >= half) x += half;
-    track.style.transform = `translate3d(${x}px,0,0)`;
-  });
 
   /* ---------- reveals ---------- */
   ScrollTrigger.batch(".rv:not(.hero .rv)", {
