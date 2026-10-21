@@ -88,11 +88,7 @@
       .add(hero, "-=0.55");
   }
 
-  /* ---------- hero: cursor light and parallax ---------- */
-  const heroEl = $(".hero"), spot = $(".hero .spot");
-  const sx = gsap.quickTo(spot, "x", { duration: 0.9, ease: "power3" });
-  const sy = gsap.quickTo(spot, "y", { duration: 0.9, ease: "power3" });
-  heroEl.addEventListener("pointermove", e => { const r = heroEl.getBoundingClientRect(); sx(e.clientX - r.left); sy(e.clientY - r.top); });
+  /* ---------- hero parallax (the forge shader handles the light) ---------- */
   gsap.to(".hero .ghost", { yPercent: 30, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
   gsap.to(".hero .wrap", { y: -60, opacity: 0.25, ease: "none", scrollTrigger: { trigger: ".hero", start: "40% top", end: "bottom top", scrub: true } });
 
@@ -159,19 +155,8 @@
   /* footer wordmark rises into place */
   gsap.from("footer .giant", { yPercent: 45, ease: "none", scrollTrigger: { trigger: "footer", start: "top bottom", end: "bottom bottom", scrub: true } });
 
-  /* ---------- cursor + magnetic buttons (mouse only) ---------- */
+  /* ---------- magnetic buttons (mouse only) ---------- */
   if (matchMedia("(pointer: fine)").matches) {
-    const cur = $(".cursor"), dot = $(".cursor .dot"), ringEl = $(".cursor .ring");
-    const dx = gsap.quickTo(dot, "x", { duration: 0.12 }), dy = gsap.quickTo(dot, "y", { duration: 0.12 });
-    const rx = gsap.quickTo(ringEl, "x", { duration: 0.55, ease: "power3" }), ry = gsap.quickTo(ringEl, "y", { duration: 0.55, ease: "power3" });
-    gsap.set(cur, { opacity: 0 });
-    addEventListener("pointermove", e => { gsap.to(cur, { opacity: 1, duration: 0.3, overwrite: "auto" }); dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY); });
-    document.addEventListener("pointerleave", () => gsap.to(cur, { opacity: 0, duration: 0.3 }));
-    $$("a, button").forEach(el => {
-      el.addEventListener("pointerenter", () => cur.classList.add("hover"));
-      el.addEventListener("pointerleave", () => cur.classList.remove("hover"));
-    });
-
     $$(".magnetic").forEach(el => {
       const mx = gsap.quickTo(el, "x", { duration: 0.6, ease: "power3" }), my = gsap.quickTo(el, "y", { duration: 0.6, ease: "power3" });
       el.addEventListener("pointermove", e => { const r = el.getBoundingClientRect(); mx((e.clientX - r.left - r.width / 2) * 0.28); my((e.clientY - r.top - r.height / 2) * 0.35); });
