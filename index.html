@@ -4,232 +4,390 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Serindor</title>
-<meta name="description" content="Serindor — the home of Cryptic Seconds, Serinote and future projects.">
-<meta name="theme-color" content="#0E1014">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 58 12v18c0 16-11 26-26 31C17 56 6 46 6 30V12Z' fill='%231F3A5F' stroke='%233D7BD9' stroke-width='3'/%3E%3Cpath d='M32 14v34M20 26h24' stroke='%23E6E8EC' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Serindor is an independent studio making small games and tools: Cryptic Seconds, a daily cryptic clue for Discord, and Serinote, which turns any reading into a lesson you can see.">
+<meta name="theme-color" content="#0B0D11">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@1&family=Figtree:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Figtree:wght@400;500;600&display=swap">
+<script>
+  // Motion is opt-out: anyone asking for reduced motion gets the plain, still page.
+  (function () {
+    var d = document.documentElement;
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) d.classList.add("motion");
+    var seen = false; try { seen = sessionStorage.getItem("srd-intro") === "1"; } catch (e) {}
+    if (seen) d.classList.add("no-intro");
+    // Failsafe: if the scripts never arrive, show everything.
+    setTimeout(function () { if (!d.classList.contains("ready")) d.classList.remove("motion"); }, 4000);
+  })();
+</script>
 <style>
 /*
-  Serindor. Sable ground, forged-steel plates, azure heraldry.
-  One bold thing: the hanging azure banner with the crest. Everything else stays quiet and left-aligned.
-  Type: IM Fell English SC for display (old-print, carved), Figtree for reading.
+  Serindor — sable ground, argent type, one azure accent.
+  Type-led: Cormorant Garamond for display, Figtree for reading.
+  The signature is the motion: inertia scroll, masked type, stacking project plates.
 */
 :root {
-  --sable: #0E1014;
-  --sable-2: #14171C;
-  --steel: #2A2F36;
-  --edge: #3A414A;
-  --burnished: #8A929C;
-  --argent: #E6E8EC;
+  --sable: #0B0D11;
+  --sable-2: #111419;
+  --steel: #1A1E25;
+  --steel-2: #232831;
+  --edge: rgba(230, 232, 236, .10);
+  --edge-2: rgba(230, 232, 236, .18);
+  --muted: #8E96A1;
+  --argent: #E9EBEF;
   --azure: #3D7BD9;
-  --azure-deep: #1F3A5F;
-  --azure-pale: #9EC0EE;
-  --display: "IM Fell English SC", "Palatino Linotype", Palatino, Georgia, serif;
-  --italic: "IM Fell English", "Palatino Linotype", Georgia, serif;
-  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --azure-hi: #6A9BE6;
+  --azure-pale: #A9C6F0;
+  --display: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+  --body: "Figtree", "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --gutter: max(20px, env(safe-area-inset-left));
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { background: var(--sable); }
-body { margin: 0; background: var(--sable); color: var(--argent); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-a { color: var(--azure-pale); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-a:hover { color: var(--argent); }
-:focus-visible { outline: 2px solid var(--azure); outline-offset: 3px; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body { margin: 0; background: var(--sable); color: var(--argent); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip; }
+::selection { background: var(--azure); color: #fff; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--azure-hi); outline-offset: 4px; border-radius: 2px; }
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding-inline: var(--gutter); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+/* film grain over everything, very faint */
+body::after {
+  content: ""; position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.motion body::after { animation: grain 1.2s steps(6) infinite; }
+@keyframes grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,-1%)} 80%{transform:translate(3%,3%)} 100%{transform:translate(0,0)} }
 
-/* header */
-.bar { border-bottom: 1px solid var(--edge); }
-.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--argent); text-decoration: none; font-family: var(--display); font-size: 22px; }
-.brand svg { width: 22px; height: 26px; flex: none; }
-nav { display: flex; gap: 24px; }
-nav a { color: var(--burnished); text-decoration: none; font-size: 15px; padding-block: 8px; }
-nav a:hover { color: var(--argent); }
+/* ---------- intro ---------- */
+.intro { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; background: var(--sable); }
+.motion:not(.no-intro) .intro { display: grid; }
+.intro .word { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 9vw, 112px); letter-spacing: .04em; display: flex; overflow: hidden; line-height: 1.1; padding-bottom: .06em; }
+.intro .word span { display: inline-block; transform: translateY(110%); }
+.intro .rule { position: absolute; left: 50%; top: calc(50% + clamp(36px, 6vw, 72px)); width: min(320px, 60vw); height: 1px; background: var(--azure); transform: translateX(-50%) scaleX(0); }
 
-/* hero: text on the left, a banner hanging from the header rule on the right */
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: start; }
-.hero .text { padding-block: 96px 88px; }
-.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(64px, 11vw, 124px); line-height: .92; margin: 0 0 20px; }
-.hero .tag { font-family: var(--italic); font-style: italic; font-size: clamp(22px, 3vw, 28px); margin: 0 0 32px; color: var(--argent); }
-.hero .lede { margin: 0 0 32px; max-width: 46ch; color: var(--burnished); }
-.actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 20px; border-radius: 2px; font-weight: 600; font-size: 15px; text-decoration: none; }
+/* ---------- header ---------- */
+.bar { position: fixed; inset: 0 0 auto; z-index: 50; transition: transform .6s var(--ease), background-color .4s, border-color .4s; border-bottom: 1px solid transparent; }
+.bar.scrolled { background: rgba(11, 13, 17, .84); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); border-color: var(--edge); }
+.bar.hide { transform: translateY(-100%); }
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+.brand { font-family: var(--display); font-weight: 600; font-size: 25px; letter-spacing: .06em; text-decoration: none; }
+.bar nav { display: flex; align-items: center; gap: 6px; }
+.bar nav a { position: relative; text-decoration: none; font-size: 15px; color: var(--muted); padding: 10px 14px; transition: color .3s; }
+.bar nav a:hover { color: var(--argent); }
+.bar nav a.pill { color: var(--argent); border: 1px solid var(--edge-2); border-radius: 999px; padding: 9px 18px; margin-left: 8px; transition: border-color .3s, background-color .3s; }
+.bar nav a.pill:hover { border-color: var(--azure); background: rgba(61, 123, 217, .12); }
+@media (max-width: 560px) { .bar nav a:not(.pill) { display: none; } }
+
+/* ---------- hero ---------- */
+.hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; padding: 140px 0 72px; overflow: hidden; isolation: isolate; }
+.hero .glow { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 78% 22%, rgba(61, 123, 217, .22), transparent 70%),
+    radial-gradient(40% 40% at 12% 90%, rgba(61, 123, 217, .10), transparent 70%); }
+.hero .spot { position: absolute; z-index: -1; width: 720px; height: 720px; left: 0; top: 0; margin: -360px 0 0 -360px; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, rgba(106, 155, 230, .14), transparent 62%); transition: opacity .8s; }
+.hero:hover .spot { opacity: 1; }
+.hero .ghost { position: absolute; z-index: -1; right: -2vw; top: 50%; transform: translateY(-60%); font-family: var(--display); font-weight: 500; font-size: 34vw; line-height: .8; letter-spacing: -.02em; color: transparent; -webkit-text-stroke: 1px rgba(230, 232, 236, .05); white-space: nowrap; pointer-events: none; user-select: none; }
+.eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 28px; font-size: 14px; letter-spacing: .02em; color: var(--muted); }
+.eyebrow::before { content: ""; width: 36px; height: 1px; background: var(--azure); }
+.hero h1 { font-family: var(--display); font-weight: 500; font-size: clamp(56px, 10.4vw, 168px); line-height: .9; letter-spacing: -.02em; margin: 0 0 40px; }
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--azure-pale); }
+.line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.line > span { display: block; }
+.hero .foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 32px; }
+.hero .lede { margin: 0; max-width: 44ch; color: var(--muted); font-size: 18px; }
+.hero .lede strong { color: var(--argent); font-weight: 500; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.cue { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 12px; letter-spacing: .14em; color: var(--muted); text-decoration: none; }
+.cue i { width: 1px; height: 64px; background: linear-gradient(var(--edge-2), var(--edge-2)) no-repeat; position: relative; overflow: hidden; }
+.cue i::after { content: ""; position: absolute; left: 0; top: -40%; width: 1px; height: 40%; background: var(--azure-hi); }
+.motion .cue i::after { animation: drip 2.2s var(--ease) infinite; }
+@keyframes drip { to { top: 100%; } }
+@media (max-width: 760px) { .hero .foot { grid-template-columns: 1fr; } .cue { display: none; } .hero { padding-bottom: 56px; } }
+
+/* buttons */
+.btn { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; font-weight: 500; font-size: 15px; text-decoration: none; overflow: hidden; isolation: isolate; transition: color .45s var(--ease), border-color .45s var(--ease); will-change: transform; }
+.btn .arrow { width: 14px; height: 14px; transition: transform .45s var(--ease); }
+.btn:hover .arrow { transform: translateX(3px); }
 .btn-primary { background: var(--azure); color: #fff; }
-.btn-primary:hover { background: #4C88E0; color: #fff; }
-.btn-quiet { border: 1px solid var(--edge); color: var(--argent); }
-.btn-quiet:hover { border-color: var(--azure-pale); color: var(--argent); }
+.btn-primary::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--argent); transform: translateY(101%); border-radius: inherit; transition: transform .55s var(--ease); }
+.btn-primary:hover { color: var(--sable); }
+.btn-primary:hover::before { transform: translateY(0); }
+.btn-quiet { border: 1px solid var(--edge-2); color: var(--argent); }
+.btn-quiet:hover { border-color: var(--argent); }
 
-.banner { margin-top: -1px; justify-self: center; width: 100%; }
-.banner svg { display: block; width: 100%; height: auto; }
-@media (max-width: 800px) {
-  .hero .wrap { grid-template-columns: 1fr; gap: 0; }
-  .banner { order: -1; width: 150px; justify-self: start; }
-  .hero .text { padding-block: 32px 64px; }
+/* ---------- marquee ---------- */
+.marquee { border-block: 1px solid var(--edge); overflow: hidden; padding: 26px 0; white-space: nowrap; user-select: none; }
+.marquee .track { display: inline-flex; will-change: transform; }
+.marquee span { font-family: var(--display); font-style: italic; font-size: clamp(34px, 5vw, 64px); line-height: 1; padding-right: .6em; color: var(--argent); }
+.marquee span.o { font-style: normal; color: transparent; -webkit-text-stroke: 1px rgba(230, 232, 236, .38); }
+.marquee b { display: inline-block; width: .32em; height: .32em; margin: 0 .6em .12em 0; vertical-align: middle; border-radius: 50%; background: var(--azure); }
+
+/* ---------- statement ---------- */
+.statement { padding: clamp(120px, 18vw, 220px) 0; }
+.statement p { margin: 0; max-width: 22ch; font-family: var(--display); font-weight: 500; font-size: clamp(36px, 5.6vw, 84px); line-height: 1.04; letter-spacing: -.01em; }
+.statement p em { font-style: italic; font-weight: 400; color: var(--azure-pale); }
+.statement .w { opacity: 1; }
+.motion .statement .w { opacity: .16; }
+.statement .meta { display: flex; gap: 48px; margin-top: 64px; color: var(--muted); font-size: 15px; flex-wrap: wrap; }
+.statement .meta div { border-top: 1px solid var(--edge-2); padding-top: 16px; min-width: 180px; }
+.statement .meta b { display: block; font-family: var(--display); font-weight: 500; font-size: 40px; line-height: 1; color: var(--argent); margin-bottom: 8px; }
+
+/* ---------- projects: stacking plates ---------- */
+.projects { padding-bottom: 80px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 40px; border-bottom: 1px solid var(--edge); padding-bottom: 20px; }
+.sec-head h2 { font-family: var(--display); font-weight: 500; font-size: clamp(40px, 6vw, 80px); line-height: 1; letter-spacing: -.01em; margin: 0; }
+.sec-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.stack { display: grid; gap: 24px; }
+.plate { position: sticky; top: 96px; min-height: min(640px, calc(100svh - 128px)); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); border-radius: 28px; overflow: hidden; background: var(--steel); border: 1px solid var(--edge); transform-origin: 50% 0; will-change: transform; }
+.plate::after { content: ""; position: absolute; inset: 0; background: #05070A; opacity: var(--dim, 0); pointer-events: none; border-radius: inherit; }
+.plate:nth-child(2) { top: 112px; background: #171B22; }
+.plate:nth-child(3) { top: 128px; }
+.plate .text { display: flex; flex-direction: column; padding: clamp(28px, 4vw, 56px); min-width: 0; }
+.plate .num { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); margin-bottom: auto; padding-bottom: 40px; }
+.plate .num .tag { border: 1px solid var(--edge-2); border-radius: 999px; padding: 6px 14px; font-size: 13px; color: var(--azure-pale); }
+.plate h3 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5.4vw, 80px); line-height: .95; letter-spacing: -.015em; margin: 0 0 20px; }
+.plate p.desc { margin: 0 0 32px; max-width: 42ch; color: #B9C0C9; }
+.plate .links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; font-size: 15px; }
+.plate .links a:not(.btn) { color: var(--muted); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .45s var(--ease), color .3s; padding-bottom: 2px; }
+.plate .links a:not(.btn):hover { color: var(--argent); background-size: 100% 1px; }
+.plate .vis { position: relative; display: grid; place-items: center; padding: 40px; background: radial-gradient(80% 70% at 60% 40%, rgba(61, 123, 217, .16), transparent 70%), var(--sable-2); border-left: 1px solid var(--edge); overflow: hidden; }
+.plate.last { position: relative; top: auto; margin-top: 24px; min-height: 0; grid-template-columns: 1fr; background: transparent; border-style: dashed; border-color: var(--edge-2); }
+.plate.last .text { flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-block: 40px; }
+.plate.last h3 { font-size: clamp(32px, 4vw, 52px); margin: 0; }
+.plate.last h3 em { font-style: italic; font-weight: 400; color: var(--muted); }
+@media (max-width: 860px) {
+  .plate { position: relative; top: auto !important; min-height: 0; grid-template-columns: 1fr; border-radius: 22px; }
+  .plate .vis { border-left: 0; border-top: 1px solid var(--edge); order: -1; padding: 32px 20px; }
+  .plate .num { padding-bottom: 28px; }
 }
 
-/* sections */
-section { padding-block: 72px; border-top: 1px solid var(--edge); }
-h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; margin: 0 0 28px; }
+/* clue card (Cryptic Seconds) */
+html:not(.motion) .clue .tiles span { color: #fff; background: var(--azure); border-color: var(--azure); }
+.clue { width: min(420px, 100%); background: var(--steel-2); border: 1px solid var(--edge-2); border-radius: 20px; padding: 26px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7); }
+.clue .top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+.clue .timer { position: relative; width: 44px; height: 44px; }
+.clue .timer svg { width: 44px; height: 44px; transform: rotate(-90deg); }
+.clue .timer span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--argent); }
+.clue q { display: block; quotes: none; font-family: var(--display); font-style: italic; font-size: 30px; line-height: 1.15; margin-bottom: 24px; }
+.clue .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.clue .tiles span { aspect-ratio: 1; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--edge-2); font-weight: 600; font-size: 22px; color: transparent; transition: background-color .35s, border-color .35s, color .2s, transform .35s var(--ease); }
+.clue .tiles span.on { color: #fff; background: var(--azure); border-color: var(--azure); transform: translateY(-3px); }
+.clue .row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 13px; color: var(--muted); }
+.clue .row b { color: var(--azure-pale); font-weight: 500; }
 
-/* the project: a forged-steel plate, the only boxed element on the page */
-.plate { display: grid; grid-template-columns: 180px minmax(0, 1fr); background: var(--steel); border: 1px solid var(--edge); border-radius: 3px; }
-.plate .seal { display: grid; place-items: center; padding: 28px; border-right: 1px solid var(--edge); background: var(--azure-deep); border-radius: 3px 0 0 3px; }
-.plate .seal svg { width: 112px; height: 112px; }
-.plate .body { padding: 28px 32px 30px; min-width: 0; }
-.plate h3 { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; margin: 0 0 4px; }
-.plate .kind { margin: 0 0 16px; color: var(--azure-pale); font-size: 15px; }
-.plate p.desc { margin: 0 0 24px; max-width: 56ch; }
-.plate .links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; font-size: 15px; }
-@media (max-width: 680px) {
-  .plate { grid-template-columns: 1fr; }
-  .plate .seal { border-right: 0; border-bottom: 1px solid var(--edge); border-radius: 3px 3px 0 0; padding: 20px; justify-items: start; }
-  .plate .seal svg { width: 72px; height: 72px; }
-  .plate .body { padding: 22px 20px 24px; }
-}
-.plate + .plate { margin-top: 20px; }
-.more { margin: 20px 0 0; color: var(--burnished); font-size: 15px; }
+/* concept map (Serinote) */
+.map { width: min(460px, 100%); height: auto; overflow: visible; }
+.map .page { fill: var(--steel-2); stroke: var(--edge-2); }
+.map .ln { stroke: #39404B; stroke-width: 6; stroke-linecap: round; }
+.map .link { fill: none; stroke: var(--azure-hi); stroke-width: 1.6; }
+.map .node rect { fill: var(--sable); stroke: var(--azure); stroke-width: 1.4; }
+.map .node text { fill: var(--argent); font-family: var(--body); font-size: 14px; }
+.map .hl { fill: rgba(61, 123, 217, .35); }
 
-/* contact */
-.contact p.intro { margin: 0 0 18px; }
-.addr-list { display: grid; gap: 0; max-width: 640px; border-top: 1px solid var(--edge); }
-.addr { display: grid; grid-template-columns: 210px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; padding: 14px 0; border-bottom: 1px solid var(--edge); }
-@media (max-width: 560px) { .addr { grid-template-columns: minmax(0, 1fr) auto; } .addr span { grid-column: 1 / -1; } }
-.addr span { color: var(--burnished); font-size: 15px; }
-.addr a { font-size: 18px; color: var(--argent); overflow-wrap: anywhere; }
-.copy { background: none; border: 1px solid var(--edge); color: var(--burnished); font: inherit; font-size: 14px; min-height: 36px; padding: 4px 14px; border-radius: 2px; cursor: pointer; }
-.copy:hover { border-color: var(--azure-pale); color: var(--argent); }
+/* ---------- contact ---------- */
+.contact { padding: clamp(72px, 9vw, 130px) 0 120px; }
+.contact .big { font-family: var(--display); font-weight: 500; font-size: clamp(56px, 11vw, 180px); line-height: .9; letter-spacing: -.02em; margin: 0 0 64px; }
+.contact .big em { font-style: italic; font-weight: 400; color: var(--azure-pale); }
+.addrs { border-top: 1px solid var(--edge); }
+.addr { display: grid; grid-template-columns: 240px minmax(0, 1fr) auto; align-items: center; gap: 8px 24px; padding: 28px 0; border-bottom: 1px solid var(--edge); }
+.addr span { color: var(--muted); font-size: 15px; }
+.addr a { font-family: var(--display); font-size: clamp(28px, 3.6vw, 48px); line-height: 1.1; text-decoration: none; overflow-wrap: anywhere; background: linear-gradient(var(--azure), var(--azure)) 0 100% / 0 2px no-repeat; transition: background-size .6s var(--ease); justify-self: start; }
+.addr a:hover { background-size: 100% 2px; }
+.copy { background: none; border: 1px solid var(--edge-2); color: var(--muted); font: inherit; font-size: 14px; min-height: 40px; padding: 0 18px; border-radius: 999px; cursor: pointer; transition: border-color .3s, color .3s; }
+.copy:hover { border-color: var(--argent); color: var(--argent); }
+@media (max-width: 720px) { .addr { grid-template-columns: minmax(0, 1fr) auto; } .addr span { grid-column: 1 / -1; } }
 
-footer { border-top: 1px solid var(--edge); }
-footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 24px max(24px, env(safe-area-inset-bottom)); color: var(--burnished); font-size: 14px; }
+/* ---------- footer ---------- */
+footer { border-top: 1px solid var(--edge); overflow: hidden; }
+footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px 32px; padding-block: 28px; color: var(--muted); font-size: 14px; }
+footer .row nav { display: flex; gap: 24px; flex-wrap: wrap; }
+footer .row a { text-decoration: none; transition: color .3s; }
+footer .row a:hover { color: var(--argent); }
+footer .giant { font-family: var(--display); font-weight: 500; font-size: 23.4vw; line-height: .74; letter-spacing: -.03em; text-align: center; margin: 0 0 -.02em; color: var(--steel-2); user-select: none; padding-bottom: max(0px, env(safe-area-inset-bottom)); }
+
+/* ---------- cursor (fine pointers only) ---------- */
+.cursor { position: fixed; left: 0; top: 0; z-index: 95; pointer-events: none; display: none; }
+.cursor .dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--argent); }
+.cursor .ring { position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; border: 1px solid rgba(230, 232, 236, .35); transition: width .4s var(--ease), height .4s var(--ease), margin .4s var(--ease), background-color .4s, border-color .4s; }
+.cursor.hover .ring { width: 72px; height: 72px; margin: -36px 0 0 -36px; background: rgba(61, 123, 217, .14); border-color: rgba(106, 155, 230, .6); }
+@media (pointer: fine) { .motion .cursor { display: block; } }
+
+/* ---------- reveal states (only when motion is on) ---------- */
+.motion .rv { opacity: 0; transform: translateY(28px); }
+.motion .line > span { transform: translateY(105%); }
 </style>
 </head>
 <body>
 
+<div class="intro" aria-hidden="true">
+  <div class="word"><span>S</span><span>e</span><span>r</span><span>i</span><span>n</span><span>d</span><span>o</span><span>r</span></div>
+  <i class="rule"></i>
+</div>
+
+<div class="cursor" aria-hidden="true"><i class="ring"></i><i class="dot"></i></div>
+
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="/">
-      <svg viewBox="0 0 52 60" aria-hidden="true"><path d="M26 2 50 10v16c0 16-10 26-24 32C12 52 2 42 2 26V10Z" fill="#1F3A5F" stroke="#3D7BD9" stroke-width="2.5"/><path d="M26 13v32M16 23h20" stroke="#E6E8EC" stroke-width="3.5" stroke-linecap="round"/></svg>
-      Serindor
-    </a>
+    <a class="brand" href="/" aria-label="Serindor, home">Serindor</a>
     <nav aria-label="Main">
       <a href="#projects">Projects</a>
       <a href="#contact">Contact</a>
+      <a class="pill" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Play Cryptic Seconds</a>
     </nav>
   </div>
 </header>
 
-<div class="hero">
-  <div class="wrap">
-    <div class="text">
-      <h1>Serindor</h1>
-      <p class="tag">Small things, carefully made.</p>
-      <p class="lede">An independent maker of games and tools: Cryptic Seconds, a daily cryptic clue for Discord, and Serinote, which turns any reading into a lesson you can see.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add Cryptic Seconds to Discord</a>
-        <a class="btn btn-quiet" href="#contact">Contact</a>
-      </div>
-    </div>
-
-    <div class="banner" aria-hidden="true">
-      <!-- An azure banner hanging from the header rule, swallow-tailed, bearing the Serindor crest. Original artwork. -->
-      <svg viewBox="0 0 300 470">
-        <defs>
-          <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#18304F"/><stop offset=".5" stop-color="#22426C"/><stop offset="1" stop-color="#18304F"/>
-          </linearGradient>
-          <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#AEB5BE"/><stop offset=".5" stop-color="#4A525C"/><stop offset="1" stop-color="#8A929C"/>
-          </linearGradient>
-        </defs>
-        <rect x="18" y="0" width="264" height="10" fill="#3A414A"/>
-        <path d="M30 10h240v420l-120-56-120 56Z" fill="url(#cloth)"/>
-        <path d="M44 10v396M256 10v396" stroke="#3D7BD9" stroke-width="2" opacity=".55"/>
-        <g transform="translate(70 70)">
-          <path d="M80 0 160 26v58c0 58-36 94-80 118C36 178 0 142 0 84V26Z" fill="url(#metal)"/>
-          <path d="M80 12 148 34v50c0 50-31 81-68 102C43 165 12 134 12 84V34Z" fill="#1F3A5F"/>
-          <path d="M80 30v134" stroke="#E6E8EC" stroke-width="7" stroke-linecap="round"/>
-          <path d="M80 26 74 40h12Z" fill="#E6E8EC"/>
-          <rect x="54" y="136" width="52" height="7" rx="3.5" fill="#E6E8EC"/>
-          <circle cx="80" cy="178" r="7" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="2.5"/>
-        </g>
-        <text x="150" y="350" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="30" fill="#E6E8EC" letter-spacing="2">Serindor</text>
-      </svg>
-    </div>
-  </div>
-</div>
-
-<section id="projects">
-  <div class="wrap">
-    <h2>Projects</h2>
-    <article class="plate">
-      <div class="seal" aria-hidden="true">
-        <svg viewBox="0 0 140 140">
-          <circle cx="70" cy="70" r="58" fill="none" stroke="#3A414A" stroke-width="8"/>
-          <path d="M70 12a58 58 0 1 1-55.2 75.9" fill="none" stroke="#3D7BD9" stroke-width="8" stroke-linecap="round"/>
-          <text x="70" y="82" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="40" fill="#E6E8EC">Cs</text>
-        </svg>
-      </div>
-      <div class="body">
-        <h3>Cryptic Seconds</h3>
-        <p class="kind">A Discord game, live now and free to play</p>
-        <p class="desc">A daily cryptic clue, played right inside your Discord server. One clue a day, a streak to protect, and a leaderboard to settle the argument.</p>
-        <div class="links">
-          <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add to Discord</a>
-          <a href="/crypticseconds/terms/">Terms of Service</a>
-          <a href="/crypticseconds/privacy/">Privacy Policy</a>
-          <a href="mailto:support@serindor.com">Support</a>
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="glow"></div>
+    <div class="spot"></div>
+    <div class="ghost" aria-hidden="true">Serindor</div>
+    <div class="wrap">
+      <p class="eyebrow rv">An independent studio, est. 2026</p>
+      <h1 id="hero-title">
+        <span class="line"><span>Small things,</span></span>
+        <span class="line"><span><em>carefully</em> made.</span></span>
+      </h1>
+      <div class="foot">
+        <div>
+          <p class="lede rv">Serindor makes games and tools that each do one thing well. <strong>Cryptic Seconds</strong> is a daily cryptic clue for Discord. <strong>Serinote</strong> turns any reading into a lesson you can see.</p>
+          <div class="actions rv">
+            <a class="btn btn-primary magnetic" href="#projects">See the work
+              <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="btn btn-quiet magnetic" href="#contact">Get in touch</a>
+          </div>
         </div>
+        <a class="cue rv" href="#about" aria-label="Scroll down"><i></i>SCROLL</a>
       </div>
-    </article>
-    <article class="plate">
-      <div class="seal" aria-hidden="true">
-        <svg viewBox="0 0 140 140">
-          <rect x="22" y="18" width="70" height="98" rx="6" fill="none" stroke="#9EC0EE" stroke-width="6"/>
-          <path d="M40 46h34M40 62h34M40 78h22" stroke="#3A414A" stroke-width="6" stroke-linecap="round"/>
-          <path d="M92 46 112 40M92 78 116 92" stroke="#E6E8EC" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="114" cy="40" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
-          <circle cx="116" cy="94" r="10" fill="#3D7BD9" stroke="#E6E8EC" stroke-width="3"/>
-        </svg>
-      </div>
-      <div class="body">
-        <h3>Serinote</h3>
-        <p class="kind">A study tool, in early preview</p>
-        <p class="desc">Turn any reading into a lesson you can see: a summary, a concept map, the key formulas, flashcards and a quiz, with every point linked back to the page it came from.</p>
-        <div class="links">
-          <a class="btn btn-primary" href="/serinote/">Open Serinote</a>
-          <a href="mailto:hello@serindor.com?subject=Serinote">Feedback</a>
-        </div>
-      </div>
-    </article>
-    <p class="more">More projects are on the anvil.</p>
-  </div>
-</section>
+    </div>
+  </section>
 
-<section class="contact" id="contact">
-  <div class="wrap">
-    <h2>Contact</h2>
-    <p class="intro">For anything at all:</p>
-    <div class="addr-list">
-      <div class="addr"><span>General</span><a id="m1" href="mailto:hello@serindor.com">hello@serindor.com</a><button class="copy" type="button" data-copy="m1">Copy</button></div>
-      <div class="addr"><span>Cryptic Seconds support</span><a id="m2" href="mailto:support@serindor.com">support@serindor.com</a><button class="copy" type="button" data-copy="m2">Copy</button></div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Cryptic Seconds</span><b></b><span class="o">Serinote</span><b></b><span>More on the anvil</span><b></b>
+      <span>Cryptic Seconds</span><b></b><span class="o">Serinote</span><b></b><span>More on the anvil</span><b></b>
     </div>
   </div>
-</section>
+
+  <section class="statement" id="about" aria-label="About Serindor">
+    <div class="wrap">
+      <p class="split">A small studio, a few good ideas, and the patience to finish them. Every Serindor project is <em>small on purpose</em> and made to be used every day.</p>
+      <div class="meta">
+        <div class="rv"><b>2</b>projects out in the world</div>
+        <div class="rv"><b>1</b>new clue, every day</div>
+        <div class="rv"><b>UK</b>made in Britain</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects" aria-labelledby="projects-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="projects-title" class="rv">Projects</h2>
+        <p class="rv">Selected work, 2026</p>
+      </div>
+
+      <div class="stack">
+        <article class="plate" id="cs">
+          <div class="text">
+            <div class="num"><span>01</span><span class="tag">Live on Discord</span></div>
+            <h3>Cryptic Seconds</h3>
+            <p class="desc">A daily cryptic clue, played right inside your Discord server. One clue a day, a streak to protect, and a leaderboard to settle the argument.</p>
+            <div class="links">
+              <a class="btn btn-primary magnetic" href="https://discord.com/oauth2/authorize?client_id=1561108641627774976" target="_blank" rel="noopener">Add to Discord
+                <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <a href="/crypticseconds/terms/">Terms</a>
+              <a href="/crypticseconds/privacy/">Privacy</a>
+              <a href="mailto:support@serindor.com">Support</a>
+            </div>
+          </div>
+          <div class="vis" aria-hidden="true">
+            <div class="clue">
+              <div class="top"><span>Today's clue</span>
+                <div class="timer"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="#2E343E" stroke-width="3"/><circle class="ring" cx="22" cy="22" r="19" fill="none" stroke="#3D7BD9" stroke-width="3" stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="0"/></svg><span class="t">0:60</span></div>
+              </div>
+              <q>Listen, mixed up, becomes quiet</q>
+              <div class="tiles"><span>S</span><span>I</span><span>L</span><span>E</span><span>N</span><span>T</span></div>
+              <div class="row"><span>(6)</span><span>Streak <b>12 days</b></span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="plate" id="sn">
+          <div class="text">
+            <div class="num"><span>02</span><span class="tag">Early preview</span></div>
+            <h3>Serinote</h3>
+            <p class="desc">Turn any reading into a lesson you can see: a summary, a concept map, the key formulas, flashcards and a quiz, with every point linked back to the page it came from.</p>
+            <div class="links">
+              <a class="btn btn-primary magnetic" href="/serinote/">Open Serinote
+                <svg class="arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <a href="mailto:hello@serindor.com?subject=Serinote">Send feedback</a>
+            </div>
+          </div>
+          <div class="vis" aria-hidden="true">
+            <svg class="map" viewBox="0 0 460 340">
+              <rect class="page" x="20" y="30" width="170" height="240" rx="12"/>
+              <rect class="hl" x="40" y="62" width="104" height="14" rx="3"/>
+              <path class="ln" d="M44 69h96M44 101h120M44 133h88M44 165h110M44 197h70M44 229h100"/>
+              <rect class="hl" x="40" y="190" width="80" height="14" rx="3"/>
+              <path class="link" d="M150 69C230 69 230 52 290 52"/>
+              <path class="link" d="M170 133C240 133 240 140 290 140"/>
+              <path class="link" d="M126 197C230 197 230 228 290 228"/>
+              <path class="link" d="M200 250C250 300 280 306 300 306"/>
+              <g class="node"><rect x="290" y="34" width="148" height="36" rx="18"/><text x="364" y="57" text-anchor="middle">Summary</text></g>
+              <g class="node"><rect x="290" y="122" width="148" height="36" rx="18"/><text x="364" y="145" text-anchor="middle">Concept map</text></g>
+              <g class="node"><rect x="290" y="210" width="148" height="36" rx="18"/><text x="364" y="233" text-anchor="middle">Flashcards</text></g>
+              <g class="node"><rect x="300" y="288" width="120" height="36" rx="18"/><text x="360" y="311" text-anchor="middle">Quiz</text></g>
+            </svg>
+          </div>
+        </article>
+      </div>
+
+      <article class="plate last">
+          <div class="text">
+            <h3>Next project <em>— on the anvil</em></h3>
+            <a class="btn btn-quiet magnetic" href="mailto:hello@serindor.com?subject=Hello">Hear about it first</a>
+          </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <h2 class="big" id="contact-title">
+        <span class="line"><span>Say</span></span>
+        <span class="line"><span><em>hello.</em></span></span>
+      </h2>
+      <div class="addrs">
+        <div class="addr rv"><span>General</span><a id="m1" href="mailto:hello@serindor.com">hello@serindor.com</a><button class="copy" type="button" data-copy="m1">Copy</button></div>
+        <div class="addr rv"><span>Cryptic Seconds support</span><a id="m2" href="mailto:support@serindor.com">support@serindor.com</a><button class="copy" type="button" data-copy="m2">Copy</button></div>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <div class="wrap"><span>© 2026 Serindor</span><span>Small things, carefully made.</span></div>
+  <div class="wrap row">
+    <span>© 2026 Serindor</span>
+    <nav aria-label="Footer">
+      <a href="/crypticseconds/terms/">Terms</a>
+      <a href="/crypticseconds/privacy/">Privacy</a>
+      <a href="mailto:hello@serindor.com">hello@serindor.com</a>
+    </nav>
+  </div>
+  <p class="giant" aria-hidden="true">Serindor</p>
 </footer>
 
-<script>
-document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
-  const text = document.getElementById(btn.dataset.copy).textContent;
-  try { await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
-  catch { btn.textContent = "Press Ctrl+C"; const r = document.createRange(); r.selectNodeContents(document.getElementById(btn.dataset.copy)); getSelection().removeAllRanges(); getSelection().addRange(r); }
-  setTimeout(() => (btn.textContent = "Copy"), 1600);
-}));
-</script>
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/vendor/lenis.min.js" defer></script>
+<script src="assets/home.js" defer></script>
 </body>
 </html>
